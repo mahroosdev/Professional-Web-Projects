@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Motion Designer — ChromaForge Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/motion-designer.css">
+</head>
+<body>
+<header>
+  <div class="hdr">
+    <a href="index.html" class="back-btn">← HUB</a>
+    <div class="logo-area">
+      <div class="logo-title">CHROMA<span>FORGE</span></div>
+      <div class="logo-badge">MOTION</div>
+    </div>
+    <div class="hdr-right">Animation Color Studio</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="panel">
+        <div class="panel-title">Motion Type</div>
+        <div class="section-tabs">
+          <button class="sec-tab active" data-sec="title-card" onclick="selectSection(this)"><span class="sec-ico">🎬</span>Title Card</button>
+          <button class="sec-tab" data-sec="transition" onclick="selectSection(this)"><span class="sec-ico">⚡</span>Transition</button>
+          <button class="sec-tab" data-sec="lower-third" onclick="selectSection(this)"><span class="sec-ico">📊</span>Lower Third</button>
+          <button class="sec-tab" data-sec="explainer" onclick="selectSection(this)"><span class="sec-ico">🎥</span>Explainer</button>
+          <button class="sec-tab" data-sec="logo-reveal" onclick="selectSection(this)"><span class="sec-ico">⬡</span>Logo Reveal</button>
+          <button class="sec-tab" data-sec="ui-animation" onclick="selectSection(this)"><span class="sec-ico">📱</span>UI Animation</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Energy</div>
+        <div class="chips">
+          <button class="chip active" data-mood="any" onclick="selectMood(this)">Any</button>
+          <button class="chip" data-mood="kinetic" onclick="selectMood(this)">Kinetic</button>
+          <button class="chip" data-mood="smooth" onclick="selectMood(this)">Smooth</button>
+          <button class="chip" data-mood="electric" onclick="selectMood(this)">Electric</button>
+          <button class="chip" data-mood="organic" onclick="selectMood(this)">Organic</button>
+          <button class="chip" data-mood="dark" onclick="selectMood(this)">Dark</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Color Count</div>
+        <div class="count-row">
+          <button class="cnt-btn active" onclick="selCount(this,3)">3</button>
+          <button class="cnt-btn" onclick="selCount(this,4)">4</button>
+          <button class="cnt-btn" onclick="selCount(this,5)">5</button>
+          <button class="cnt-btn" onclick="selCount(this,6)">6</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Harmony</div>
+        <div class="scheme-row">
+          <button class="sch-btn active" data-sch="free" onclick="selScheme(this)">Free</button>
+          <button class="sch-btn" data-sch="comp" onclick="selScheme(this)">Comp</button>
+          <button class="sch-btn" data-sch="analogous" onclick="selScheme(this)">Analog</button>
+          <button class="sch-btn" data-sch="mono" onclick="selScheme(this)">Mono</button>
+          <button class="sch-btn" data-sch="triadic" onclick="selScheme(this)">Triadic</button>
+        </div>
+      </div>
+
+      <button class="gen-btn" onclick="generatePalette()"><span>▶ GENERATE</span></button>
+      <button class="gen-btn sec" onclick="savePalette()">EXPORT PALETTE</button>
+    </aside>
+
+    <main class="content">
+      <div class="box">
+        <div class="box-hd">
+          <div>
+            <div class="box-title">Curated Palettes</div>
+            <div class="box-sub">Motion palettes for <span id="secLabel">Title Card</span></div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <span class="tag" id="sugTag">title</span>
+            <button class="copy-btn" onclick="generateSuggestions()">↻</button>
+          </div>
+        </div>
+        <div class="sug-grid" id="sugGrid"></div>
+      </div>
+
+      <div class="box">
+        <div class="box-hd">
+          <div>
+            <div class="box-title">Motion Preview</div>
+            <div class="box-sub" id="mockSub">Animated mockup</div>
+          </div>
+        </div>
+        <div class="mock-tabs">
+          <button class="mock-tab active" onclick="switchMock(this,'animated')">Animated</button>
+          <button class="mock-tab" onclick="switchMock(this,'gradient')">Gradients</button>
+          <button class="mock-tab" onclick="switchMock(this,'stills')">Stills</button>
+        </div>
+        <div class="mock-viewport"><div id="mockFrame"></div></div>
+      </div>
+
+      <div class="box">
+        <div class="box-hd">
+          <div><div class="box-title">Palette</div><div class="box-sub">Motion-ready colors</div></div>
+          <div style="display:flex;gap:5px">
+            <button class="copy-btn" onclick="copyCSS()">CSS</button>
+            <button class="copy-btn" onclick="copyHex()">HEX</button>
+          </div>
+        </div>
+        <div class="pal-bar" id="palBar"></div>
+        <div class="pal-swatches" id="palSwatches"></div>
+        <div class="pal-actions">
+          <button class="act-btn" onclick="shufflePalette()">↻ Shuffle</button>
+          <button class="act-btn" onclick="genComp()">Comp</button>
+          <button class="act-btn" onclick="genAnalogous()">Analogous</button>
+          <button class="act-btn" onclick="genTriadic()">Triadic</button>
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="box-hd"><div><div class="box-title">Shade Scale</div></div></div>
+        <div class="cmp-row" id="cmpRow"></div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script defer src="js/motion-designer.js"></script>
+</body>
+</html>

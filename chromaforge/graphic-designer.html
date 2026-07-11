@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Graphic Designer — ChromaForge Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Barlow+Condensed:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/graphic-designer.css">
+</head>
+<body>
+<header>
+  <div class="hdr">
+    <a href="index.html" class="back-btn">← Hub</a>
+    <div class="logo-area">
+      <div class="logo-cf">CHROMAFORGE</div><div class="logo-slash">/</div>
+      <div class="logo-badge">GRAPHIC DESIGNER</div>
+    </div>
+    <div class="hdr-right">Visual Design Studio</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="panel">
+        <div class="panel-title"><span></span>Work Type</div>
+        <div class="section-tabs">
+          <button class="sec-tab active" data-sec="poster" onclick="selectSection(this)"><span class="sec-ico">🖼</span>Poster</button>
+          <button class="sec-tab" data-sec="editorial" onclick="selectSection(this)"><span class="sec-ico">📰</span>Editorial</button>
+          <button class="sec-tab" data-sec="flyer" onclick="selectSection(this)"><span class="sec-ico">📄</span>Flyer</button>
+          <button class="sec-tab" data-sec="book-cover" onclick="selectSection(this)"><span class="sec-ico">📗</span>Book Cover</button>
+          <button class="sec-tab" data-sec="packaging" onclick="selectSection(this)"><span class="sec-ico">📦</span>Packaging</button>
+          <button class="sec-tab" data-sec="infographic" onclick="selectSection(this)"><span class="sec-ico">📊</span>Infographic</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title"><span></span>Mood</div>
+        <div class="chips">
+          <button class="chip active" data-mood="any" onclick="selectMood(this)">Any</button>
+          <button class="chip" data-mood="bold" onclick="selectMood(this)">Bold</button>
+          <button class="chip" data-mood="elegant" onclick="selectMood(this)">Elegant</button>
+          <button class="chip" data-mood="retro" onclick="selectMood(this)">Retro</button>
+          <button class="chip" data-mood="dark" onclick="selectMood(this)">Dark</button>
+          <button class="chip" data-mood="neon" onclick="selectMood(this)">Neon</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title"><span></span>Color Count</div>
+        <div class="count-row">
+          <button class="cnt-btn" onclick="selCount(this,2)">2</button>
+          <button class="cnt-btn active" onclick="selCount(this,3)">3</button>
+          <button class="cnt-btn" onclick="selCount(this,4)">4</button>
+          <button class="cnt-btn" onclick="selCount(this,5)">5</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title"><span></span>Scheme</div>
+        <div class="scheme-row">
+          <button class="sch-btn active" data-sch="free" onclick="selScheme(this)">Free</button>
+          <button class="sch-btn" data-sch="comp" onclick="selScheme(this)">Comp</button>
+          <button class="sch-btn" data-sch="analogous" onclick="selScheme(this)">Analogous</button>
+          <button class="sch-btn" data-sch="mono" onclick="selScheme(this)">Mono</button>
+          <button class="sch-btn" data-sch="triadic" onclick="selScheme(this)">Triadic</button>
+        </div>
+      </div>
+
+      <button class="gen-btn" onclick="generatePalette()">Generate</button>
+      <button class="gen-btn sec" onclick="savePalette()">Save Palette</button>
+    </aside>
+
+    <main class="content">
+      <div class="box">
+        <div class="box-hd">
+          <div>
+            <div class="box-title">Curated Sets</div>
+            <div class="box-sub">Palettes for <span id="secLabel">Poster Design</span></div>
+          </div>
+          <div style="display:flex;gap:5px;align-items:center">
+            <span class="tag" id="sugTag">poster</span>
+            <button class="copy-btn" onclick="generateSuggestions()">↻ Refresh</button>
+          </div>
+        </div>
+        <div class="sug-grid" id="sugGrid"></div>
+      </div>
+
+      <div class="box">
+        <div class="box-hd">
+          <div>
+            <div class="box-title">Live Canvas</div>
+            <div class="box-sub" id="mockSub">Poster preview</div>
+          </div>
+        </div>
+        <div class="mock-tabs">
+          <button class="mock-tab active" onclick="switchMock(this,'poster')">Poster</button>
+          <button class="mock-tab" onclick="switchMock(this,'spread')">Spread</button>
+          <button class="mock-tab" onclick="switchMock(this,'strip')">Color Strip</button>
+        </div>
+        <div class="mock-viewport"><div id="mockFrame"></div></div>
+      </div>
+
+      <div class="box">
+        <div class="box-hd">
+          <div><div class="box-title">Palette</div><div class="box-sub">Click to edit</div></div>
+          <div style="display:flex;gap:5px">
+            <button class="copy-btn" onclick="copyCSS()">CSS</button>
+            <button class="copy-btn" onclick="copyHex()">HEX</button>
+          </div>
+        </div>
+        <div class="pal-bar" id="palBar"></div>
+        <div class="pal-swatches" id="palSwatches"></div>
+        <div class="pal-actions">
+          <button class="act-btn" onclick="shufflePalette()">Shuffle</button>
+          <button class="act-btn" onclick="genComp()">Complementary</button>
+          <button class="act-btn" onclick="genAnalogous()">Analogous</button>
+          <button class="act-btn" onclick="genMono()">Monochromatic</button>
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="box-hd"><div><div class="box-title">Tints & Shades</div></div></div>
+        <div class="cmp-row" id="cmpRow"></div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script defer src="js/graphic-designer.js"></script>
+</body>
+</html>

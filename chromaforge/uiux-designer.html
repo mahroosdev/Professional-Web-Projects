@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UI/UX Designer — ChromaForge Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/uiux-designer.css">
+</head>
+<body>
+<header>
+  <div class="hdr">
+    <a href="index.html" class="back-btn">← HUB</a>
+    <div class="logo-area">
+      <div class="logo-title">ChromaForge</div>
+      <div class="logo-badge">UI/UX DESIGNER</div>
+    </div>
+    <div class="hdr-right">
+      <div class="stat-chip">Tokens: <span id="tokenCount">0</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="layout">
+    <aside class="sidebar">
+
+      <div class="panel">
+        <div class="panel-title">Design Context</div>
+        <div class="section-tabs" id="sectionTabs">
+          <button class="sec-tab active" data-sec="dashboard" onclick="selectSection(this)"><span class="sec-ico">⊞</span> Dashboard / App</button>
+          <button class="sec-tab" data-sec="mobile" onclick="selectSection(this)"><span class="sec-ico">📱</span> Mobile App</button>
+          <button class="sec-tab" data-sec="design-system" onclick="selectSection(this)"><span class="sec-ico">🧩</span> Design System</button>
+          <button class="sec-tab" data-sec="onboarding" onclick="selectSection(this)"><span class="sec-ico">🚀</span> Onboarding Flow</button>
+          <button class="sec-tab" data-sec="data-viz" onclick="selectSection(this)"><span class="sec-ico">📊</span> Data Visualization</button>
+          <button class="sec-tab" data-sec="form-ui" onclick="selectSection(this)"><span class="sec-ico">📋</span> Forms & Inputs</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Theme Mode</div>
+        <div class="chips" id="moodChips">
+          <button class="chip active" data-mood="light" onclick="selectMood(this)">Light</button>
+          <button class="chip" data-mood="dark" onclick="selectMood(this)">Dark</button>
+          <button class="chip" data-mood="system" onclick="selectMood(this)">System</button>
+          <button class="chip" data-mood="high-contrast" onclick="selectMood(this)">HC</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Token Count</div>
+        <div class="count-row">
+          <button class="cnt-btn" onclick="selCount(this,3)">3</button>
+          <button class="cnt-btn active" onclick="selCount(this,5)">5</button>
+          <button class="cnt-btn" onclick="selCount(this,7)">7</button>
+          <button class="cnt-btn" onclick="selCount(this,9)">9</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Color Harmony</div>
+        <div class="scheme-row">
+          <button class="sch-btn active" data-sch="free" onclick="selScheme(this)">Free</button>
+          <button class="sch-btn" data-sch="comp" onclick="selScheme(this)">Comp</button>
+          <button class="sch-btn" data-sch="analogous" onclick="selScheme(this)">Analogous</button>
+          <button class="sch-btn" data-sch="mono" onclick="selScheme(this)">Mono</button>
+          <button class="sch-btn" data-sch="triadic" onclick="selScheme(this)">Triadic</button>
+        </div>
+      </div>
+
+      <button class="gen-btn" onclick="generatePalette()">Generate Tokens →</button>
+      <button class="gen-btn sec" onclick="savePalette()">Export Token Set</button>
+
+    </aside>
+
+    <main class="content">
+
+      <div class="box">
+        <div class="box-hd">
+          <div>
+            <div class="box-title">Curated Token Sets</div>
+            <div class="box-sub">Semantic palettes for <strong id="secLabel">Dashboard</strong></div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <span class="tag" id="sugTag">dashboard · 5 tokens</span>
+            <button class="copy-btn" onclick="generateSuggestions()">↻</button>
+          </div>
+        </div>
+        <div class="sug-grid" id="sugGrid"></div>
+      </div>
+
+      <div class="box">
+        <div class="box-hd">
+          <div>
+            <div class="box-title">Interface Preview</div>
+            <div class="box-sub" id="mockSub">Live UI mockup</div>
+          </div>
+        </div>
+        <div class="mock-tabs">
+          <button class="mock-tab active" onclick="switchMock(this,'desktop')">Desktop</button>
+          <button class="mock-tab" onclick="switchMock(this,'mobile')">Mobile</button>
+          <button class="mock-tab" onclick="switchMock(this,'components')">Components</button>
+        </div>
+        <div class="mock-viewport">
+          <div class="mock-device-bar">
+            <div class="dev-dots">
+              <div class="dev-dot" style="background:#ff5f56"></div>
+              <div class="dev-dot" style="background:#ffbd2e"></div>
+              <div class="dev-dot" style="background:#27c93f"></div>
+            </div>
+            <div class="dev-url" id="mockUrl">app.interface.com</div>
+          </div>
+          <div id="mockFrame" style="min-height:340px"></div>
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="box-hd">
+          <div>
+            <div class="box-title">Design Token Builder</div>
+            <div class="box-sub">Edit · Lock · Export semantic tokens</div>
+          </div>
+          <div style="display:flex;gap:5px">
+            <button class="copy-btn" onclick="copyTokens()">⎘ Tokens JSON</button>
+            <button class="copy-btn" onclick="copyCSS()">⎘ CSS Vars</button>
+          </div>
+        </div>
+        <div class="pal-bar" id="palBar"></div>
+        <div class="pal-swatches" id="palSwatches"></div>
+        <div class="pal-actions">
+          <button class="act-btn" onclick="shufflePalette()">↻ Regenerate</button>
+          <button class="act-btn" onclick="genComp()">⊕ Comp</button>
+          <button class="act-btn" onclick="genAnalogous()">≋ Analogous</button>
+          <button class="act-btn" onclick="genMono()">● Mono</button>
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="box-hd">
+          <div><div class="box-title">Shade Scale</div><div class="box-sub">Tints and shades for primary token</div></div>
+        </div>
+        <div class="cmp-row" id="cmpRow"></div>
+      </div>
+
+    </main>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script defer src="js/uiux-designer.js"></script>
+</body>
+</html>

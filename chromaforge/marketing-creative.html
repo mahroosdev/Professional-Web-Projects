@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marketing Creative — ChromaForge Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/marketing-creative.css">
+</head>
+<body>
+<header>
+  <div class="hdr">
+    <a href="index.html" class="back-btn">← Hub</a>
+    <div class="logo-area">
+      <div class="logo-title">CHROMAFORGE</div>
+      <div class="logo-badge">MARKETING</div>
+    </div>
+    <div class="hdr-right">Campaign & Content Studio</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="panel">
+        <div class="panel-title">Campaign Type</div>
+        <div class="section-tabs">
+          <button class="sec-tab active" data-sec="social-post" onclick="selectSection(this)"><span class="sec-ico">📱</span>Social Post</button>
+          <button class="sec-tab" data-sec="ad-banner" onclick="selectSection(this)"><span class="sec-ico">🎯</span>Ad Banner</button>
+          <button class="sec-tab" data-sec="email" onclick="selectSection(this)"><span class="sec-ico">✉️</span>Email</button>
+          <button class="sec-tab" data-sec="landing-ad" onclick="selectSection(this)"><span class="sec-ico">🚀</span>Landing Page</button>
+          <button class="sec-tab" data-sec="outdoor" onclick="selectSection(this)"><span class="sec-ico">🏙</span>Outdoor / OOH</button>
+          <button class="sec-tab" data-sec="presentation" onclick="selectSection(this)"><span class="sec-ico">📊</span>Deck / Pitch</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Campaign Goal</div>
+        <div class="chips">
+          <button class="chip active" data-mood="any" onclick="selectMood(this)">Any</button>
+          <button class="chip" data-mood="awareness" onclick="selectMood(this)">Awareness</button>
+          <button class="chip" data-mood="conversion" onclick="selectMood(this)">Convert</button>
+          <button class="chip" data-mood="retention" onclick="selectMood(this)">Retain</button>
+          <button class="chip" data-mood="launch" onclick="selectMood(this)">Launch</button>
+          <button class="chip" data-mood="sale" onclick="selectMood(this)">Sale</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Color Count</div>
+        <div class="count-row">
+          <button class="cnt-btn" onclick="selCount(this,2)">2</button>
+          <button class="cnt-btn active" onclick="selCount(this,3)">3</button>
+          <button class="cnt-btn" onclick="selCount(this,4)">4</button>
+          <button class="cnt-btn" onclick="selCount(this,5)">5</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Harmony</div>
+        <div class="scheme-row">
+          <button class="sch-btn active" data-sch="free" onclick="selScheme(this)">Free</button>
+          <button class="sch-btn" data-sch="comp" onclick="selScheme(this)">Complementary</button>
+          <button class="sch-btn" data-sch="analogous" onclick="selScheme(this)">Analogous</button>
+          <button class="sch-btn" data-sch="mono" onclick="selScheme(this)">Mono</button>
+          <button class="sch-btn" data-sch="triadic" onclick="selScheme(this)">Triadic</button>
+        </div>
+      </div>
+
+      <button class="gen-btn" onclick="generatePalette()">Generate Campaign</button>
+      <button class="gen-btn sec" onclick="savePalette()">Export Kit</button>
+    </aside>
+
+    <main class="content">
+      <div class="box">
+        <div class="box-hd">
+          <div>
+            <div class="box-title">Curated Campaigns</div>
+            <div class="box-sub">High-impact palettes for <span id="secLabel">Social Post</span></div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <span class="tag" id="sugTag">social</span>
+            <button class="copy-btn" onclick="generateSuggestions()">↻</button>
+          </div>
+        </div>
+        <div class="sug-grid" id="sugGrid"></div>
+      </div>
+
+      <div class="box">
+        <div class="box-hd">
+          <div>
+            <div class="box-title">Campaign Preview</div>
+            <div class="box-sub" id="mockSub">Live mockup</div>
+          </div>
+        </div>
+        <div class="mock-tabs">
+          <button class="mock-tab active" onclick="switchMock(this,'primary')">Primary</button>
+          <button class="mock-tab" onclick="switchMock(this,'alternate')">Alternate</button>
+          <button class="mock-tab" onclick="switchMock(this,'sheet')">Color Sheet</button>
+        </div>
+        <div class="mock-viewport"><div id="mockFrame"></div></div>
+      </div>
+
+      <div class="box">
+        <div class="box-hd">
+          <div><div class="box-title">Campaign Palette</div><div class="box-sub">High-impact colors</div></div>
+          <div style="display:flex;gap:5px">
+            <button class="copy-btn" onclick="copyCSS()">CSS</button>
+            <button class="copy-btn" onclick="copyHex()">HEX</button>
+          </div>
+        </div>
+        <div class="pal-bar" id="palBar"></div>
+        <div class="pal-swatches" id="palSwatches"></div>
+        <div class="pal-actions">
+          <button class="act-btn" onclick="shufflePalette()">↻ New</button>
+          <button class="act-btn" onclick="genComp()">Complement</button>
+          <button class="act-btn" onclick="genAnalogous()">Analogous</button>
+          <button class="act-btn" onclick="genMono()">Mono</button>
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="box-hd"><div><div class="box-title">Tint Scale</div></div></div>
+        <div class="cmp-row" id="cmpRow"></div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script defer src="js/marketing-creative.js"></script>
+</body>
+</html>

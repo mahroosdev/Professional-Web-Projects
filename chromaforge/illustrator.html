@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Illustrator — ChromaForge Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,300;1,600&family=Instrument+Sans:wght@400;500;600&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/illustrator.css">
+</head>
+<body>
+<header>
+  <div class="hdr">
+    <a href="index.html" class="back-btn">← Hub</a>
+    <div class="logo-area">
+      <div class="logo-title">ChromaForge</div>
+      <div class="logo-badge">ILLUSTRATOR</div>
+    </div>
+    <div class="hdr-right">Illustration Color Lab</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="panel">
+        <div class="panel-title">Illustration Type</div>
+        <div class="section-tabs">
+          <button class="sec-tab active" data-sec="character" onclick="selectSection(this)"><span class="sec-ico">🧑‍🎨</span>Characters</button>
+          <button class="sec-tab" data-sec="scene" onclick="selectSection(this)"><span class="sec-ico">🌄</span>Scenes</button>
+          <button class="sec-tab" data-sec="abstract" onclick="selectSection(this)"><span class="sec-ico">⬡</span>Abstract</button>
+          <button class="sec-tab" data-sec="floral" onclick="selectSection(this)"><span class="sec-ico">🌸</span>Floral</button>
+          <button class="sec-tab" data-sec="editorial-ill" onclick="selectSection(this)"><span class="sec-ico">📖</span>Editorial</button>
+          <button class="sec-tab" data-sec="children" onclick="selectSection(this)"><span class="sec-ico">🧸</span>Children's</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Color Story</div>
+        <div class="chips">
+          <button class="chip active" data-mood="any" onclick="selectMood(this)">Any</button>
+          <button class="chip" data-mood="dreamy" onclick="selectMood(this)">Dreamy</button>
+          <button class="chip" data-mood="bold" onclick="selectMood(this)">Bold</button>
+          <button class="chip" data-mood="earthy" onclick="selectMood(this)">Earthy</button>
+          <button class="chip" data-mood="neon" onclick="selectMood(this)">Neon</button>
+          <button class="chip" data-mood="vintage" onclick="selectMood(this)">Vintage</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Color Count</div>
+        <div class="count-row">
+          <button class="cnt-btn" onclick="selCount(this,4)">4</button>
+          <button class="cnt-btn active" onclick="selCount(this,5)">5</button>
+          <button class="cnt-btn" onclick="selCount(this,6)">6</button>
+          <button class="cnt-btn" onclick="selCount(this,7)">7</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Harmony</div>
+        <div class="scheme-row">
+          <button class="sch-btn active" data-sch="free" onclick="selScheme(this)">Free</button>
+          <button class="sch-btn" data-sch="analogous" onclick="selScheme(this)">Analogous</button>
+          <button class="sch-btn" data-sch="comp" onclick="selScheme(this)">Comp</button>
+          <button class="sch-btn" data-sch="triadic" onclick="selScheme(this)">Triadic</button>
+          <button class="sch-btn" data-sch="split" onclick="selScheme(this)">Split</button>
+        </div>
+      </div>
+
+      <button class="gen-btn" onclick="generatePalette()">Conjure Colors</button>
+      <button class="gen-btn sec" onclick="savePalette()">Save Story</button>
+    </aside>
+
+    <main class="content">
+      <div class="box">
+        <div class="box-hd">
+          <div>
+            <div class="box-title">Curated Stories</div>
+            <div class="box-sub">Expressive palettes for <span id="secLabel">Characters</span></div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <span class="tag" id="sugTag">characters</span>
+            <button class="copy-btn" onclick="generateSuggestions()">↻</button>
+          </div>
+        </div>
+        <div class="sug-grid" id="sugGrid"></div>
+      </div>
+
+      <div class="box">
+        <div class="box-hd">
+          <div>
+            <div class="box-title">Illustration Preview</div>
+            <div class="box-sub" id="mockSub">Color story in context</div>
+          </div>
+        </div>
+        <div class="mock-tabs">
+          <button class="mock-tab active" onclick="switchMock(this,'canvas')">Canvas</button>
+          <button class="mock-tab" onclick="switchMock(this,'palette-story')">Story</button>
+          <button class="mock-tab" onclick="switchMock(this,'swatches')">Swatch Board</button>
+        </div>
+        <div class="mock-viewport"><div id="mockFrame"></div></div>
+      </div>
+
+      <div class="box">
+        <div class="box-hd">
+          <div><div class="box-title">Color Story</div><div class="box-sub">Your expressive palette</div></div>
+          <div style="display:flex;gap:5px">
+            <button class="copy-btn" onclick="copyCSS()">CSS</button>
+            <button class="copy-btn" onclick="copyHex()">HEX</button>
+          </div>
+        </div>
+        <div class="pal-bar" id="palBar"></div>
+        <div class="pal-swatches" id="palSwatches"></div>
+        <div class="pal-actions">
+          <button class="act-btn" onclick="shufflePalette()">↻ New Story</button>
+          <button class="act-btn" onclick="genAnalogous()">Analogous</button>
+          <button class="act-btn" onclick="genTriadic()">Triadic</button>
+          <button class="act-btn" onclick="genSplit()">Split-Comp</button>
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="box-hd"><div><div class="box-title">Tonal Range</div></div></div>
+        <div class="cmp-row" id="cmpRow"></div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script defer src="js/illustrator.js"></script>
+</body>
+</html>

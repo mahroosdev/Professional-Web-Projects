@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web Designer — ChromaForge Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/web-designer.css">
+</head>
+<body>
+<header>
+  <div class="hdr">
+    <a href="index.html" class="back-btn">← HUB</a>
+    <div class="logo-area">
+      <div class="logo-title">CHROMAFORGE</div>
+      <div class="logo-badge">WEB DESIGNER</div>
+    </div>
+    <div class="hdr-right">
+      <div class="stat-chip">Palettes saved: <span id="savedCount">0</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="layout">
+    <aside class="sidebar">
+
+      <div class="panel">
+        <div class="panel-title">Design Section</div>
+        <div class="section-tabs" id="sectionTabs">
+          <button class="sec-tab active" data-sec="landing" onclick="selectSection(this)"><span class="sec-ico">🏠</span>Landing Page</button>
+          <button class="sec-tab" data-sec="portfolio" onclick="selectSection(this)"><span class="sec-ico">🗂</span>Portfolio</button>
+          <button class="sec-tab" data-sec="blog" onclick="selectSection(this)"><span class="sec-ico">📝</span>Blog</button>
+          <button class="sec-tab" data-sec="ecommerce" onclick="selectSection(this)"><span class="sec-ico">🛒</span>E-Commerce</button>
+          <button class="sec-tab" data-sec="saas" onclick="selectSection(this)"><span class="sec-ico">⚡</span>SaaS App</button>
+          <button class="sec-tab" data-sec="agency" onclick="selectSection(this)"><span class="sec-ico">🏢</span>Agency</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Style / Mood</div>
+        <div class="chips" id="moodChips">
+          <button class="chip active" data-mood="any" onclick="selectMood(this)">Any</button>
+          <button class="chip" data-mood="dark" onclick="selectMood(this)">Dark</button>
+          <button class="chip" data-mood="light" onclick="selectMood(this)">Light</button>
+          <button class="chip" data-mood="vibrant" onclick="selectMood(this)">Vibrant</button>
+          <button class="chip" data-mood="minimal" onclick="selectMood(this)">Minimal</button>
+          <button class="chip" data-mood="tech" onclick="selectMood(this)">Tech</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Color Count</div>
+        <div class="count-row">
+          <button class="cnt-btn" onclick="selCount(this,2)">2</button>
+          <button class="cnt-btn active" onclick="selCount(this,3)">3</button>
+          <button class="cnt-btn" onclick="selCount(this,4)">4</button>
+          <button class="cnt-btn" onclick="selCount(this,5)">5</button>
+          <button class="cnt-btn" onclick="selCount(this,6)">6</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Color Scheme</div>
+        <div class="scheme-row" id="schemeRow">
+          <button class="sch-btn active" data-sch="free" onclick="selScheme(this)">Free</button>
+          <button class="sch-btn" data-sch="comp" onclick="selScheme(this)">Complementary</button>
+          <button class="sch-btn" data-sch="analogous" onclick="selScheme(this)">Analogous</button>
+          <button class="sch-btn" data-sch="mono" onclick="selScheme(this)">Mono</button>
+          <button class="sch-btn" data-sch="triadic" onclick="selScheme(this)">Triadic</button>
+        </div>
+      </div>
+
+      <button class="gen-btn" onclick="generatePalette()">⚡ GENERATE PALETTE</button>
+      <button class="gen-btn sec" onclick="savePalette()">💾 Save Palette</button>
+
+    </aside>
+
+    <main class="content">
+
+      <!-- SUGGESTIONS -->
+      <div class="box">
+        <div class="box-hd">
+          <div>
+            <div class="box-title">✦ Curated Suggestions</div>
+            <div class="box-sub">Smart palettes for <strong id="secLabel">Landing Page</strong> · click to apply</div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <span class="tag" id="sugTag">landing · 3 colors</span>
+            <button class="copy-btn" onclick="generateSuggestions()">↻</button>
+          </div>
+        </div>
+        <div class="sug-grid" id="sugGrid"></div>
+      </div>
+
+      <!-- MOCKUP -->
+      <div class="box">
+        <div class="box-hd">
+          <div>
+            <div class="box-title">🖥 Live Preview</div>
+            <div class="box-sub" id="mockSub">Website mockup — updates with palette</div>
+          </div>
+        </div>
+        <div class="mock-tabs" id="mockTabs">
+          <button class="mock-tab active" onclick="switchMock(this,'desktop')">🖥 Desktop</button>
+          <button class="mock-tab" onclick="switchMock(this,'mobile')">📲 Mobile</button>
+        </div>
+        <div class="mock-viewport">
+          <div class="mock-device-bar">
+            <div class="dev-dots">
+              <div class="dev-dot" style="background:#ff5f56"></div>
+              <div class="dev-dot" style="background:#ffbd2e"></div>
+              <div class="dev-dot" style="background:#27c93f"></div>
+            </div>
+            <div class="dev-url" id="mockUrl">yourwebsite.com</div>
+          </div>
+          <div id="mockFrame"></div>
+        </div>
+      </div>
+
+      <!-- PALETTE BUILDER -->
+      <div class="box">
+        <div class="box-hd">
+          <div>
+            <div class="box-title">🎨 Your Palette</div>
+            <div class="box-sub">Click swatches to edit · lock colors · shuffle freely</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="copy-btn" onclick="copyCSS()">⎘ CSS</button>
+            <button class="copy-btn" onclick="copyHex()">⎘ HEX</button>
+          </div>
+        </div>
+        <div class="pal-bar" id="palBar"></div>
+        <div class="pal-swatches" id="palSwatches"></div>
+        <div class="pal-actions">
+          <button class="act-btn" onclick="shufflePalette()">🔀 Shuffle</button>
+          <button class="act-btn" onclick="genComp()">⊕ Complement</button>
+          <button class="act-btn" onclick="genAnalogous()">≋ Analogous</button>
+          <button class="act-btn" onclick="genMono()">● Mono</button>
+        </div>
+      </div>
+
+      <!-- COMPARE -->
+      <div class="box">
+        <div class="box-hd">
+          <div>
+            <div class="box-title">⊞ Tints & Shades</div>
+            <div class="box-sub">Variations of your primary color</div>
+          </div>
+        </div>
+        <div class="cmp-row" id="cmpRow"></div>
+      </div>
+
+    </main>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script defer src="js/web-designer.js"></script>
+</body>
+</html>
