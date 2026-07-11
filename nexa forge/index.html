@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NexaForge AI — Advanced Creative Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     SPLASH
+════════════════════════════════════════ -->
+<div id="splash" style="display:none">
+  <div class="splash-bg">
+    <div class="splash-orb splash-orb-1"></div>
+    <div class="splash-orb splash-orb-2"></div>
+    <div class="splash-orb splash-orb-3"></div>
+  </div>
+  <div class="splash-inner">
+    <div class="splash-logo-wrap">
+      <svg class="splash-icon-ring" viewBox="0 0 64 64" fill="none">
+        <circle cx="32" cy="32" r="29" stroke="url(#splRing)" stroke-width="2" stroke-dasharray="6 4" opacity="0.6"/>
+        <defs><linearGradient id="splRing" x1="0" y1="0" x2="64" y2="64"><stop offset="0%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#f9a8d4"/></linearGradient></defs>
+      </svg>
+      <div class="splash-icon-inner" style="position:relative;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#6d28d9,#be185d);display:flex;align-items:center;justify-content:center;">
+        <svg viewBox="0 0 28 28" fill="none" width="18" height="18"><path d="M5 14L14 5L23 14L14 23L5 14Z" fill="white" opacity="0.9"/><circle cx="14" cy="14" r="4" fill="white"/></svg>
+      </div>
+      <span class="splash-name">NexaForge</span>
+    </div>
+    <div class="splash-version">AI Creative Studio · v3.0</div>
+    <div class="splash-progress-wrap">
+      <div class="splash-track"><div class="splash-fill"></div></div>
+    </div>
+    <div class="splash-status" id="splash-status">Initializing AI engines...</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     APP
+════════════════════════════════════════ -->
+<div id="app">
+
+<!-- Mobile Topbar -->
+<div id="mobile-topbar">
+  <button class="mobile-icon-btn" onclick="App.toggleMobileNav()">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><line x1="2" y1="5" x2="18" y2="5"/><line x1="2" y1="10" x2="18" y2="10"/><line x1="2" y1="15" x2="18" y2="15"/></svg>
+  </button>
+  <span class="mobile-logo">NexaForge AI</span>
+  <button class="mobile-icon-btn" onclick="App.openSettings()">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><circle cx="10" cy="10" r="2.5"/><path d="M16.2 12.5a1.4 1.4 0 00.28 1.52l.05.05a1.7 1.7 0 010 2.4 1.7 1.7 0 01-2.4 0l-.05-.05a1.4 1.4 0 00-1.52-.28 1.4 1.4 0 00-.85 1.28V18a1.7 1.7 0 01-3.4 0v-.07a1.4 1.4 0 00-.91-1.28 1.4 1.4 0 00-1.52.28l-.05.05a1.7 1.7 0 01-2.4-2.4l.05-.05a1.4 1.4 0 00.28-1.52 1.4 1.4 0 00-1.28-.85H2a1.7 1.7 0 010-3.4h.07a1.4 1.4 0 001.28-.91 1.4 1.4 0 00-.28-1.52l-.05-.05a1.7 1.7 0 012.4-2.4l.05.05a1.4 1.4 0 001.52.28h.06a1.4 1.4 0 00.85-1.28V2a1.7 1.7 0 013.4 0v.07a1.4 1.4 0 00.85 1.28 1.4 1.4 0 001.52-.28l.05-.05a1.7 1.7 0 012.4 2.4l-.05.05a1.4 1.4 0 00-.28 1.52v.06a1.4 1.4 0 001.28.85H18a1.7 1.7 0 010 3.4h-.07a1.4 1.4 0 00-1.28.85z"/></svg>
+  </button>
+</div>
+
+<div id="sidebar-overlay" onclick="App.toggleMobileNav()"></div>
+
+<!-- ════ SIDEBAR ════ -->
+<nav id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo-lockup">
+      <div class="logo-icon">
+        <svg viewBox="0 0 20 20" fill="none" width="16" height="16"><path d="M3 10L10 3L17 10L10 17L3 10Z" fill="white" opacity="0.9"/><circle cx="10" cy="10" r="3" fill="white"/></svg>
+      </div>
+      <div>
+        <div class="logo-text">NexaForge</div>
+        <span class="logo-badge">AI STUDIO</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="overflow-y:auto;flex:1">
+    <div class="nav-group">
+      <div class="nav-label">Create</div>
+      <button class="nav-item active" data-page="imagegen" onclick="App.go('imagegen')">
+        <div class="nav-bg"></div>
+        <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="14" height="14" rx="3"/><circle cx="6.5" cy="6.5" r="1.2"/><path d="M16 12l-4-4-5 5"/></svg>
+        Image Generator
+        <span class="nav-chip new">AI</span>
+      </button>
+      <button class="nav-item" data-page="img2code" onclick="App.go('img2code')">
+        <div class="nav-bg"></div>
+        <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12l4-4-4-4M9 14h7"/></svg>
+        Image → Code
+      </button>
+      <button class="nav-item" data-page="prompt2code" onclick="App.go('prompt2code')">
+        <div class="nav-bg"></div>
+        <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M16 11a2 2 0 01-2 2H5l-3 3V4a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+        Prompt → Code
+      </button>
+      <button class="nav-item" data-page="code2img" onclick="App.go('code2img')">
+        <div class="nav-bg"></div>
+        <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="12 14 17 9 12 4"/><polyline points="6 4 1 9 6 14"/></svg>
+        Code → Image
+      </button>
+      <button class="nav-item" data-page="editor" onclick="App.go('editor')">
+        <div class="nav-bg"></div>
+        <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 15h8M13 2.5a1.8 1.8 0 012.5 2.5L6 14l-3 1 1-3L13 2.5z"/></svg>
+        Live Editor
+      </button>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Library</div>
+      <button class="nav-item" data-page="saved" onclick="App.go('saved')">
+        <div class="nav-bg"></div>
+        <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 16H4a2 2 0 01-2-2V4a2 2 0 012-2h8l3 3v9a2 2 0 01-2 2z"/><polyline points="13 16 13 10 5 10 5 16"/><polyline points="5 2 5 6 11 6"/></svg>
+        Saved Gallery
+        <span id="saved-count-badge" class="nav-chip" style="background:rgba(109,40,217,0.15);color:var(--accent);display:none"></span>
+      </button>
+      <button class="nav-item" data-page="history" onclick="App.go('history')">
+        <div class="nav-bg"></div>
+        <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="9" r="7"/><polyline points="9 4.5 9 9 12 11"/></svg>
+        History
+      </button>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="status-badge">
+      <div class="status-dot"></div>
+      <span class="status-text">AI Online</span>
+      <span class="status-count" id="daily-remaining">∞</span>
+    </div>
+    <button class="settings-trigger" onclick="App.openSettings()">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" width="14" height="14"><circle cx="8" cy="8" r="2"/><path d="M13.5 10a1.1 1.1 0 00.22 1.22l.04.04a1.4 1.4 0 01-2 2l-.04-.04A1.1 1.1 0 0010.5 13a1.1 1.1 0 00-.67 1.01V14a1.4 1.4 0 01-2.8 0v-.06A1.1 1.1 0 006.4 13a1.1 1.1 0 00-1.22.22l-.04.04a1.4 1.4 0 01-2-2l.04-.04A1.1 1.1 0 003.4 10a1.1 1.1 0 00-1.01-.67H2a1.4 1.4 0 010-2.8h.06a1.1 1.1 0 001.01-.67A1.1 1.1 0 003 3.63l-.04-.04a1.4 1.4 0 012-2l.04.04a1.1 1.1 0 001.22-.22 1.1 1.1 0 00.67-1.01V0a1.4 1.4 0 012.8 0v.06a1.1 1.1 0 00.67 1.01 1.1 1.1 0 001.22-.22l.04-.04a1.4 1.4 0 012 2l-.04.04A1.1 1.1 0 0013 5.5a1.1 1.1 0 001.01.67H14a1.4 1.4 0 010 2.8h-.06a1.1 1.1 0 00-1.01.67z"/></svg>
+      Settings
+    </button>
+  </div>
+</nav>
+
+<!-- ════ MAIN CONTENT ════ -->
+<main id="main-content">
+
+  <!-- ══════ IMAGE GENERATOR ══════ -->
+  <section id="page-imagegen" class="page active">
+    <div class="page-hd">
+      <div class="page-hd-text">
+        <h1 class="page-title">Image Generator</h1>
+        <p class="page-subtitle">Create stunning AI images — photorealistic, artistic, cinematic, anything</p>
+      </div>
+      <div class="hd-actions">
+        <button class="btn-ghost" onclick="IG.random()">🎲 Random</button>
+        <button class="btn-prime" id="gen-btn" onclick="IG.generate()">
+          <span class="btn-txt">✦ Generate</span><span class="btn-loader"></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="gen-layout">
+      <!-- Controls -->
+      <div class="controls-col">
+        <!-- Prompt -->
+        <div class="ctrl-group">
+          <label class="ctrl-label">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" width="12" height="12"><path d="M2 7h10M7 2l5 5-5 5"/></svg>
+            Prompt
+            <span class="ctrl-label-count" id="prompt-len">0 chars</span>
+          </label>
+          <textarea id="ig-prompt" class="textarea" rows="4"
+            placeholder="A cinematic portrait with ethereal glowing wings in a misty ancient forest, golden hour rays, ultra-realistic 8K photography..."
+            oninput="IG.onPromptInput()"></textarea>
+          <div class="prompt-toolbar">
+            <button class="toolbar-btn amber" onclick="IG.enhance()">
+              ✦ Enhance
+            </button>
+            <button class="toolbar-btn" onclick="IG.showTemplates()">📋 Templates</button>
+            <button class="toolbar-btn" onclick="IG.random()">🎲 Random</button>
+          </div>
+        </div>
+
+        <!-- Prompt History -->
+        <div class="ctrl-group" id="prompt-history-wrap" style="display:none">
+          <label class="ctrl-label">Recent Prompts</label>
+          <div class="prompt-history" id="prompt-history-list"></div>
+        </div>
+
+        <!-- Negative Prompt -->
+        <div class="ctrl-group">
+          <label class="ctrl-label">Negative Prompt</label>
+          <textarea id="ig-neg" class="textarea sm" rows="2"
+            placeholder="blurry, watermark, low quality, distorted faces..."></textarea>
+        </div>
+
+        <!-- AI Model -->
+        <div class="ctrl-group">
+          <label class="ctrl-label">AI Model</label>
+          <div class="model-grid">
+            <div class="model-card on" data-model="flux-schnell" onclick="IG.setModel(this)">
+              <div class="m-active-ring"></div>
+              <div class="m-tier fast">⚡ FASTEST</div>
+              <div class="m-name">Flux Schnell</div>
+              <div class="m-desc">1-3s · Photorealistic</div>
+            </div>
+            <div class="model-card" data-model="flux-1-1-pro" onclick="IG.setModel(this)">
+              <div class="m-active-ring"></div>
+              <div class="m-tier best">★ BEST</div>
+              <div class="m-name">Flux 1.1 Pro</div>
+              <div class="m-desc">10-20s · Ultra detail</div>
+            </div>
+            <div class="model-card" data-model="dall-e-3" onclick="IG.setModel(this)">
+              <div class="m-active-ring"></div>
+              <div class="m-tier creative">✦ CREATIVE</div>
+              <div class="m-name">DALL-E 3</div>
+              <div class="m-desc">OpenAI · Artistic</div>
+            </div>
+            <div class="model-card" data-model="stable-diffusion-3" onclick="IG.setModel(this)">
+              <div class="m-active-ring"></div>
+              <div class="m-tier">◈ OPEN SRC</div>
+              <div class="m-name">Stable Diffusion</div>
+              <div class="m-desc">Versatile · Detailed</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Style -->
+        <div class="ctrl-group">
+          <label class="ctrl-label">Style Preset</label>
+          <div class="pill-row" id="style-pills">
+            <button class="pill on" data-style="photorealistic" onclick="IG.setStyle(this)">Photorealistic</button>
+            <button class="pill" data-style="cinematic" onclick="IG.setStyle(this)">Cinematic</button>
+            <button class="pill" data-style="anime" onclick="IG.setStyle(this)">Anime</button>
+            <button class="pill" data-style="oil painting" onclick="IG.setStyle(this)">Oil Paint</button>
+            <button class="pill" data-style="digital art" onclick="IG.setStyle(this)">Digital Art</button>
+            <button class="pill" data-style="watercolor" onclick="IG.setStyle(this)">Watercolor</button>
+            <button class="pill" data-style="3D render" onclick="IG.setStyle(this)">3D Render</button>
+            <button class="pill" data-style="pencil sketch" onclick="IG.setStyle(this)">Sketch</button>
+            <button class="pill" data-style="neon cyberpunk" onclick="IG.setStyle(this)">Cyberpunk</button>
+            <button class="pill" data-style="fantasy art" onclick="IG.setStyle(this)">Fantasy</button>
+          </div>
+        </div>
+
+        <!-- Aspect Ratio -->
+        <div class="ctrl-group">
+          <label class="ctrl-label">Aspect Ratio</label>
+          <div class="ratio-row">
+            <button class="ratio-btn" data-sz="square_hd" data-w="1024" data-h="1024" onclick="IG.setRatio(this)">
+              <div class="ratio-shape" style="width:20px;height:20px"></div>1:1
+            </button>
+            <button class="ratio-btn on" data-sz="portrait_4_3" data-w="768" data-h="1024" onclick="IG.setRatio(this)">
+              <div class="ratio-shape" style="width:15px;height:20px"></div>3:4
+            </button>
+            <button class="ratio-btn" data-sz="landscape_4_3" data-w="1024" data-h="768" onclick="IG.setRatio(this)">
+              <div class="ratio-shape" style="width:20px;height:15px"></div>4:3
+            </button>
+            <button class="ratio-btn" data-sz="portrait_16_9" data-w="608" data-h="1080" onclick="IG.setRatio(this)">
+              <div class="ratio-shape" style="width:11px;height:20px"></div>9:16
+            </button>
+            <button class="ratio-btn" data-sz="landscape_16_9" data-w="1280" data-h="720" onclick="IG.setRatio(this)">
+              <div class="ratio-shape" style="width:20px;height:11px"></div>16:9
+            </button>
+          </div>
+        </div>
+
+        <!-- Count -->
+        <div class="ctrl-group">
+          <label class="ctrl-label">Images to Generate</label>
+          <div class="count-row">
+            <button class="count-btn on" data-n="1" onclick="IG.setCount(this)">1</button>
+            <button class="count-btn" data-n="2" onclick="IG.setCount(this)">2</button>
+            <button class="count-btn" data-n="3" onclick="IG.setCount(this)">3</button>
+            <button class="count-btn" data-n="4" onclick="IG.setCount(this)">4</button>
+          </div>
+        </div>
+
+        <!-- Quality -->
+        <div class="ctrl-group">
+          <label class="ctrl-label">Quality</label>
+          <div class="pill-row">
+            <button class="pill on" data-q="fast" onclick="IG.setQuality(this)">⚡ Fast</button>
+            <button class="pill" data-q="balanced" onclick="IG.setQuality(this)">⚖ Balanced</button>
+            <button class="pill" data-q="high" onclick="IG.setQuality(this)">✦ High Quality</button>
+          </div>
+        </div>
+
+        <!-- Daily limit -->
+        <div class="daily-meter">
+          <span class="daily-text">Daily generations</span>
+          <div class="daily-bar-track"><div class="daily-bar-fill" id="daily-bar" style="width:0%"></div></div>
+          <span class="daily-count" id="daily-cnt">0/50</span>
+        </div>
+      </div>
+
+      <!-- Output -->
+      <div class="output-col">
+        <div class="out-topbar">
+          <span class="out-title">OUTPUT</span>
+          <div class="out-actions">
+            <button class="icon-btn success" id="gen-save-btn" onclick="IG.save()" title="Save" style="display:none">💾 Save</button>
+            <button class="icon-btn" id="gen-fav-btn" onclick="IG.toggleFav()" title="Favorite" style="display:none">♡ Favorite</button>
+            <button class="icon-btn" id="gen-dl-btn" onclick="IG.download()" title="Download">⬇ PNG</button>
+            <button class="icon-btn" id="gen-copy-btn" onclick="IG.copyImg()" title="Copy">⎘ Copy</button>
+            <button class="icon-btn" id="gen-edit-toggle" onclick="IG.toggleEdit()" title="Edit" style="display:none">✏ Edit</button>
+            <button class="icon-btn" id="gen-regen-btn" onclick="IG.generate()" title="Regenerate" style="display:none">↻ Again</button>
+          </div>
+        </div>
+
+        <div class="out-canvas" id="gen-canvas">
+          <div class="canvas-empty" id="gen-empty">
+            <svg viewBox="0 0 80 80" fill="none" width="72" height="72">
+              <rect x="8" y="8" width="64" height="64" rx="14" stroke="currentColor" stroke-width="1.5" stroke-dasharray="6 4" opacity=".25"/>
+              <path d="M28 52l12-16 10 12 7-8 9 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".35"/>
+              <circle cx="26" cy="30" r="5" stroke="currentColor" stroke-width="2" opacity=".35"/>
+            </svg>
+            <h3>Ready to generate</h3>
+            <p>Enter your prompt and hit Generate, or try a quick example below</p>
+            <div class="quick-try">
+              <span class="quick-label">Try:</span>
+              <button class="quick-btn" onclick="IG.quickGen('A stunning cyberpunk portrait with glowing neon eyes, ultra-realistic')">Portrait</button>
+              <button class="quick-btn" onclick="IG.quickGen('Breathtaking mountain landscape at golden hour, 8K photography')">Landscape</button>
+              <button class="quick-btn" onclick="IG.quickGen('Futuristic robot in neon lab, cinematic lighting, photorealistic')">Sci-Fi</button>
+            </div>
+          </div>
+
+          <div class="gen-loading" id="gen-loading" style="display:none">
+            <div class="gen-orb"></div>
+            <div class="gen-info">
+              <div class="gen-msg" id="gen-msg">Generating your image...</div>
+              <div class="gen-prog-track"><div class="gen-prog-fill" id="gen-prog"></div></div>
+              <div class="gen-sub" id="gen-sub">Powered by Pollinations AI</div>
+            </div>
+          </div>
+
+          <img id="gen-result" src="" alt="Generated" onclick="IG.lightbox()">
+          <div id="gen-multi-grid" class="multi-grid" style="display:none"></div>
+        </div>
+
+        <!-- Image Tags -->
+        <div class="image-tags" id="img-tags" style="display:none"></div>
+
+        <!-- Edit Panel -->
+        <div class="edit-panel" id="edit-panel">
+          <div class="edit-header">
+            <span class="edit-label">✏ Edit Image</span>
+            <button class="icon-btn" onclick="IG.closeEdit()" style="font-size:11px">Cancel</button>
+          </div>
+          <div class="edit-src-row">
+            <img class="edit-src-thumb" id="edit-src-thumb" src="" alt="">
+            <span class="edit-src-info">Describe changes to apply to the current image</span>
+          </div>
+          <textarea id="edit-prompt" class="textarea sm" rows="2"
+            placeholder="Make the background a sunset, add a dramatic fog, change hair to silver..."></textarea>
+          <div style="display:flex;gap:8px">
+            <button class="btn-prime" onclick="IG.applyEdit()" id="apply-edit-btn" style="flex:1">
+              <span class="btn-txt">✨ Apply Edit</span><span class="btn-loader"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════ IMAGE TO CODE ══════ -->
+  <section id="page-img2code" class="page">
+    <div class="section-bar">
+      <div>
+        <div class="section-bar-title">Image → Code</div>
+        <div class="section-bar-sub">Upload any UI screenshot and get production-ready code instantly</div>
+      </div>
+      <div class="section-bar-actions">
+        <select class="select-ctrl" id="i2c-fw">
+          <option>HTML/CSS</option><option>React JSX</option><option>Tailwind CSS</option><option>Vue SFC</option><option>SVG</option>
+        </select>
+        <button class="btn-prime" onclick="CV.img2code()" id="i2c-btn">
+          <span class="btn-txt">Convert to Code</span><span class="btn-loader"></span>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-tabs" id="i2c-mob-tabs"></div>
+    <div class="three-col">
+      <div class="tc-input" id="i2c-col-input">
+        <div class="upload-zone" id="i2c-zone"
+          onclick="document.getElementById('i2c-file').click()"
+          ondragover="event.preventDefault();this.classList.add('drag')"
+          ondragleave="this.classList.remove('drag')"
+          ondrop="event.preventDefault();this.classList.remove('drag');CV.drop(event,'i2c')">
+          <input type="file" id="i2c-file" accept="image/*" style="display:none" onchange="CV.upload(event,'i2c')">
+          <div id="i2c-zone-content">
+            <svg viewBox="0 0 44 44" fill="none" width="40" height="40" opacity=".4"><rect x="3" y="3" width="38" height="38" rx="8" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4"/><path d="M22 14v16M14 22l8-8 8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <p class="upload-hint">Drop image or tap to upload</p>
+            <p class="upload-sub">PNG, JPG, WebP supported</p>
+          </div>
+          <img id="i2c-thumb" class="upload-thumb" alt="">
+          <button id="i2c-remove" class="upload-remove" onclick="event.stopPropagation();CV.remove('i2c')">✕</button>
+        </div>
+        <div class="ctrl-group" style="margin-top:12px">
+          <label class="ctrl-label">Extra Instructions</label>
+          <textarea id="i2c-extra" class="textarea sm" rows="3" placeholder="Make it responsive, add dark theme, include hover effects..."></textarea>
+        </div>
+        <div class="ctrl-group">
+          <label class="ctrl-label">Style</label>
+          <div class="pill-row">
+            <button class="pill on" data-s="modern" onclick="CV.setStyle(this,'i2c')">Modern</button>
+            <button class="pill" data-s="minimal" onclick="CV.setStyle(this,'i2c')">Minimal</button>
+            <button class="pill" data-s="glass" onclick="CV.setStyle(this,'i2c')">Glassmorphism</button>
+            <button class="pill" data-s="brutalist" onclick="CV.setStyle(this,'i2c')">Brutalist</button>
+          </div>
+        </div>
+      </div>
+      <div class="tc-code" id="i2c-col-code">
+        <div class="code-pane" style="height:100%">
+          <div class="code-pane-hd">
+            <span class="code-lang" id="i2c-badge">HTML</span>
+            <span class="code-hint">Editable — syncs to preview</span>
+            <button class="code-copy" onclick="CV.copy('i2c')">Copy</button>
+            <button class="icon-btn" onclick="CV.exportFile('i2c')" style="margin-left:4px;font-size:11px;padding:4px 10px">⬇ Export</button>
+          </div>
+          <div class="code-body" id="i2c-code" contenteditable="true" spellcheck="false" oninput="CV.onEdit('i2c')">
+            <span class="code-placeholder-text">// Generated code appears here...
+// Upload an image and click Convert to Code</span>
+          </div>
+        </div>
+      </div>
+      <div class="tc-preview" id="i2c-col-preview">
+        <div class="preview-pane">
+          <div class="preview-hd">
+            <span>Live Preview</span>
+            <div class="preview-size-ctrls">
+              <button class="sz-btn" onclick="PV.setSize('mobile',this,'i2c')" title="Mobile">📱</button>
+              <button class="sz-btn" onclick="PV.setSize('tablet',this,'i2c')" title="Tablet">📟</button>
+              <button class="sz-btn on" onclick="PV.setSize('desktop',this,'i2c')" title="Desktop">🖥</button>
+            </div>
+          </div>
+          <div class="preview-frame-wrap" id="i2c-wrap">
+            <iframe id="i2c-preview" class="preview-iframe"></iframe>
+            <div class="preview-frame-empty" id="i2c-preview-empty"><p>Preview renders after conversion</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════ PROMPT TO CODE ══════ -->
+  <section id="page-prompt2code" class="page">
+    <div class="section-bar">
+      <div>
+        <div class="section-bar-title">Prompt → Code</div>
+        <div class="section-bar-sub">Describe any UI in plain English and get working code</div>
+      </div>
+      <div class="section-bar-actions">
+        <select class="select-ctrl" id="p2c-fw">
+          <option>HTML/CSS</option><option>React JSX</option><option>Tailwind CSS</option><option>Vue SFC</option>
+        </select>
+        <button class="btn-prime" onclick="CV.prompt2code()" id="p2c-btn">
+          <span class="btn-txt">Generate Code</span><span class="btn-loader"></span>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-tabs" id="p2c-mob-tabs"></div>
+    <div class="three-col">
+      <div class="tc-input" id="p2c-col-input">
+        <div class="ctrl-group">
+          <label class="ctrl-label">Describe Your UI</label>
+          <textarea id="p2c-prompt" class="textarea" rows="5"
+            placeholder="A beautiful SaaS landing page with animated hero, feature cards, pricing table and dark glassmorphism theme..."></textarea>
+        </div>
+        <div class="ctrl-group">
+          <label class="ctrl-label">Quick Templates</label>
+          <div class="template-grid">
+            <button class="tpl-btn" onclick="P2C.load('landing')">🏠 Landing Page</button>
+            <button class="tpl-btn" onclick="P2C.load('dashboard')">📊 Dashboard</button>
+            <button class="tpl-btn" onclick="P2C.load('login')">🔐 Login Form</button>
+            <button class="tpl-btn" onclick="P2C.load('portfolio')">🎨 Portfolio</button>
+            <button class="tpl-btn" onclick="P2C.load('ecommerce')">🛍 Product Card</button>
+            <button class="tpl-btn" onclick="P2C.load('blog')">📝 Blog Post</button>
+          </div>
+        </div>
+        <div class="toggle-list">
+          <div class="toggle-row"><span>Responsive Design</span><label class="sw"><input type="checkbox" checked id="p2c-resp"><span class="sw-track"></span></label></div>
+          <div class="toggle-row"><span>CSS Animations</span><label class="sw"><input type="checkbox" checked id="p2c-anim"><span class="sw-track"></span></label></div>
+          <div class="toggle-row"><span>Dark Mode</span><label class="sw"><input type="checkbox" id="p2c-dark"><span class="sw-track"></span></label></div>
+          <div class="toggle-row"><span>Accessibility</span><label class="sw"><input type="checkbox" checked id="p2c-a11y"><span class="sw-track"></span></label></div>
+          <div class="toggle-row"><span>Code Comments</span><label class="sw"><input type="checkbox" id="p2c-cmts"><span class="sw-track"></span></label></div>
+        </div>
+      </div>
+      <div class="tc-code" id="p2c-col-code">
+        <div class="code-pane" style="height:100%">
+          <div class="code-pane-hd">
+            <span class="code-lang" id="p2c-badge">HTML</span>
+            <span class="code-hint">Edit live — preview auto-updates</span>
+            <button class="code-copy" onclick="CV.copy('p2c')">Copy</button>
+            <button class="icon-btn" onclick="CV.exportFile('p2c')" style="margin-left:4px;font-size:11px;padding:4px 10px">⬇ Export</button>
+          </div>
+          <div class="code-body" id="p2c-code" contenteditable="true" spellcheck="false" oninput="CV.onEdit('p2c')">
+            <span class="code-placeholder-text">// Your generated code appears here...</span>
+          </div>
+        </div>
+      </div>
+      <div class="tc-preview" id="p2c-col-preview">
+        <div class="preview-pane">
+          <div class="preview-hd">
+            <span>Live Preview</span>
+            <div class="preview-size-ctrls">
+              <button class="sz-btn" onclick="PV.setSize('mobile',this,'p2c')">📱</button>
+              <button class="sz-btn" onclick="PV.setSize('tablet',this,'p2c')">📟</button>
+              <button class="sz-btn on" onclick="PV.setSize('desktop',this,'p2c')">🖥</button>
+            </div>
+          </div>
+          <div class="preview-frame-wrap" id="p2c-wrap">
+            <iframe id="p2c-preview" class="preview-iframe"></iframe>
+            <div class="preview-frame-empty" id="p2c-preview-empty"><p>Generate code to see the live preview</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════ CODE TO IMAGE ══════ -->
+  <section id="page-code2img" class="page">
+    <div class="page-hd">
+      <div class="page-hd-text">
+        <h1 class="page-title">Code → Image</h1>
+        <p class="page-subtitle">Render any HTML/CSS/JS as a high-quality PNG screenshot</p>
+      </div>
+      <div class="hd-actions">
+        <button class="btn-ghost" onclick="C2I.loadSample()">Load Sample</button>
+        <button class="btn-prime" onclick="C2I.render()" id="c2i-btn">
+          <span class="btn-txt">Render to Image</span><span class="btn-loader"></span>
+        </button>
+      </div>
+    </div>
+    <div class="c2i-grid">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="code-pane" style="min-height:360px">
+          <div class="code-pane-hd">
+            <span class="code-lang">HTML/CSS/JS</span>
+            <span class="code-hint">Paste your code here</span>
+            <button class="code-copy" onclick="document.getElementById('c2i-code').textContent=''">Clear</button>
+          </div>
+          <div class="code-body" id="c2i-code" contenteditable="true" spellcheck="false" style="min-height:300px"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:16px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-weight:700;min-width:60px">Size</span>
+            <div class="pill-row">
+              <button class="pill on" data-w="1280" data-h="800" onclick="C2I.setSize(this)">1280×800</button>
+              <button class="pill" data-w="1920" data-h="1080" onclick="C2I.setSize(this)">1920×1080</button>
+              <button class="pill" data-w="800" data-h="600" onclick="C2I.setSize(this)">800×600</button>
+              <button class="pill" data-w="375" data-h="812" onclick="C2I.setSize(this)">375×812</button>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-weight:700;min-width:60px">Background</span>
+            <div class="bg-swatches">
+              <button class="bg-swatch on" style="background:#ffffff" data-bg="#ffffff" onclick="C2I.setBg(this)" title="White"></button>
+              <button class="bg-swatch" style="background:#0a0a12" data-bg="#0a0a12" onclick="C2I.setBg(this)" title="Dark"></button>
+              <button class="bg-swatch" style="background:#f5f5f7" data-bg="#f5f5f7" onclick="C2I.setBg(this)" title="Light Gray"></button>
+              <button class="bg-swatch transparent-swatch" data-bg="transparent" onclick="C2I.setBg(this)" title="Transparent"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="output-col">
+        <div class="out-topbar">
+          <span class="out-title">RENDERED OUTPUT</span>
+          <div class="out-actions">
+            <button class="icon-btn" onclick="C2I.download()">⬇ PNG</button>
+            <button class="icon-btn" onclick="C2I.downloadHTML()">⬇ HTML</button>
+          </div>
+        </div>
+        <div class="out-canvas" id="c2i-canvas" style="min-height:360px">
+          <div class="canvas-empty" id="c2i-empty">
+            <svg viewBox="0 0 80 80" fill="none" width="72" height="72"><rect x="4" y="4" width="72" height="72" rx="10" stroke="currentColor" stroke-width="1.5" opacity=".2"/><path d="M20 40h40M32 28l-12 12 12 12M48 28l12 12-12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".35"/></svg>
+            <h3>Paste code and render</h3>
+            <p>Your rendered image will appear here</p>
+          </div>
+          <div class="gen-loading" id="c2i-loading" style="display:none">
+            <div class="gen-orb"></div>
+            <span style="color:var(--text2);font-size:13px">Rendering...</span>
+          </div>
+          <img id="c2i-result" style="display:none;max-width:100%;max-height:100%;object-fit:contain;border-radius:var(--r-lg)" alt="Rendered">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════ LIVE EDITOR ══════ -->
+  <section id="page-editor" class="page">
+    <div class="editor-bar">
+      <span class="editor-title">✏ Live Editor</span>
+      <button class="tool-btn" onclick="ED.format()">Format</button>
+      <button class="tool-btn" onclick="ED.clear()">Clear</button>
+      <select class="select-ctrl" id="ed-lang" onchange="ED.setLang(this.value)" style="padding:6px 10px;font-size:12px">
+        <option value="html">HTML</option>
+        <option value="css">CSS</option>
+        <option value="js">JavaScript</option>
+      </select>
+      <div class="tool-div"></div>
+      <button class="tool-btn" onclick="ED.screenshot()">📷 Screenshot</button>
+      <button class="tool-btn" onclick="ED.copy()">📋 Copy</button>
+      <button class="tool-btn" onclick="ED.download()">⬇ Download</button>
+      <div class="preview-size-ctrls" style="margin-left:auto">
+        <button class="sz-btn" onclick="PV.edSize('mobile',this)">📱</button>
+        <button class="sz-btn" onclick="PV.edSize('tablet',this)">📟</button>
+        <button class="sz-btn on" onclick="PV.edSize('desktop',this)">🖥</button>
+      </div>
+    </div>
+    <div class="editor-body">
+      <div class="editor-code-pane">
+        <div class="editor-code-area" id="ed-code" contenteditable="true" spellcheck="false" oninput="ED.update()"></div>
+      </div>
+      <div class="editor-resize-bar" id="ed-resizer"></div>
+      <div class="editor-preview-pane">
+        <iframe id="ed-preview" class="editor-preview-frame"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════ SAVED GALLERY ══════ -->
+  <section id="page-saved" class="page">
+    <div class="page-hd">
+      <div class="page-hd-text">
+        <h1 class="page-title">Saved Gallery</h1>
+        <p class="page-subtitle">Your saved creations — images and favorites</p>
+      </div>
+      <div class="hd-actions">
+        <button class="btn-ghost" onclick="GY.clearAll()">🗑 Clear All</button>
+      </div>
+    </div>
+    <div class="gallery-toolbar">
+      <div class="gallery-filter">
+        <button class="filter-btn on" data-f="all" onclick="GY.filter(this)">All</button>
+        <button class="filter-btn" data-f="fav" onclick="GY.filter(this)">♡ Favorites</button>
+      </div>
+      <input type="search" class="gallery-search" id="gallery-search" placeholder="Search by prompt..." oninput="GY.search(this.value)">
+    </div>
+    <div class="gallery-grid" id="gallery-grid">
+      <div class="gallery-empty">
+        <svg viewBox="0 0 64 64" fill="none" width="60" height="60" opacity=".3"><path d="M16 18H4a2 2 0 00-2 2v28a2 2 0 002 2h40a2 2 0 002-2V34" stroke="currentColor" stroke-width="1.5"/><path d="M42 2H28a2 2 0 00-2 2v24l5-3 5 3V4a2 2 0 00-2-2z" stroke="currentColor" stroke-width="1.5"/></svg>
+        <h3>No saved images yet</h3>
+        <p>Generate images and click Save to build your gallery</p>
+        <button class="btn-prime" onclick="App.go('imagegen')">Generate Images</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════ HISTORY ══════ -->
+  <section id="page-history" class="page">
+    <div class="page-hd">
+      <div class="page-hd-text">
+        <h1 class="page-title">History</h1>
+        <p class="page-subtitle">All your recent generations and conversions</p>
+      </div>
+      <div class="hd-actions">
+        <div class="view-toggle-btns">
+          <button class="vt-btn on" id="hist-list-btn" onclick="HT.setView('list',this)">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" width="12" height="12"><line x1="2" y1="4" x2="14" y2="4"/><line x1="2" y1="8" x2="14" y2="8"/><line x1="2" y1="12" x2="14" y2="12"/></svg>
+          </button>
+          <button class="vt-btn" id="hist-grid-btn" onclick="HT.setView('grid',this)">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" width="12" height="12"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+          </button>
+        </div>
+        <button class="btn-ghost" onclick="HT.clear()">Clear</button>
+      </div>
+    </div>
+    <div id="hist-list">
+      <div class="gallery-empty"><h3>No history yet</h3><p>Your generation history will appear here</p></div>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<!-- ════ SETTINGS MODAL ════ -->
+<div id="settings-modal" class="modal-mask" style="display:none" onclick="if(event.target===this)App.closeSettings()">
+  <div class="modal-box">
+    <div class="modal-hd">
+      <h2>Settings</h2>
+      <button class="modal-close" onclick="App.closeSettings()">✕</button>
+    </div>
+    <div class="modal-tabs">
+      <button class="modal-tab on" data-t="general" onclick="App.stab('general')">General</button>
+      <button class="modal-tab" data-t="account" onclick="App.stab('account')">Account</button>
+      <button class="modal-tab" data-t="about" onclick="App.stab('about')">About</button>
+    </div>
+    <div class="modal-body">
+      <!-- GENERAL -->
+      <div class="stab-pane on" id="stab-general">
+        <div class="setting-section">
+          <label class="setting-label">Theme</label>
+          <div class="pill-row">
+            <button class="pill on" onclick="App.setTheme('dark',this)">🌙 Dark</button>
+            <button class="pill" onclick="App.setTheme('light',this)">☀️ Light</button>
+            <button class="pill" onclick="App.setTheme('midnight',this)">✦ Midnight</button>
+          </div>
+        </div>
+        <div class="setting-section">
+          <label class="setting-label">Accent Color</label>
+          <div class="accent-swatches">
+            <button class="acc-sw on" style="background:linear-gradient(135deg,#6d28d9,#be185d)" onclick="App.setAccent('#6d28d9','#be185d',this)" title="Purple/Pink"></button>
+            <button class="acc-sw" style="background:linear-gradient(135deg,#0ea5e9,#6366f1)" onclick="App.setAccent('#0ea5e9','#6366f1',this)" title="Cyan/Indigo"></button>
+            <button class="acc-sw" style="background:linear-gradient(135deg,#10b981,#059669)" onclick="App.setAccent('#10b981','#059669',this)" title="Emerald"></button>
+            <button class="acc-sw" style="background:linear-gradient(135deg,#f59e0b,#ef4444)" onclick="App.setAccent('#f59e0b','#ef4444',this)" title="Amber/Red"></button>
+            <button class="acc-sw" style="background:linear-gradient(135deg,#ec4899,#f43f5e)" onclick="App.setAccent('#ec4899','#f43f5e',this)" title="Pink/Rose"></button>
+          </div>
+        </div>
+        <div class="setting-section">
+          <label class="setting-label">Default Code Format</label>
+          <select class="select-ctrl" id="s-default-fw">
+            <option>HTML/CSS</option><option>React JSX</option><option>Tailwind CSS</option>
+          </select>
+        </div>
+        <div class="setting-section" style="flex-direction:row;align-items:center;justify-content:space-between">
+          <label class="setting-label" style="margin:0">Auto-enhance prompts</label>
+          <label class="sw"><input type="checkbox" checked id="s-auto-enhance"><span class="sw-track"></span></label>
+        </div>
+        <div class="setting-section" style="flex-direction:row;align-items:center;justify-content:space-between">
+          <label class="setting-label" style="margin:0">Show image tags</label>
+          <label class="sw"><input type="checkbox" checked id="s-show-tags"><span class="sw-track"></span></label>
+        </div>
+        <div class="setting-section" style="flex-direction:row;align-items:center;justify-content:space-between">
+          <label class="setting-label" style="margin:0">Sound effects</label>
+          <label class="sw"><input type="checkbox" id="s-sounds"><span class="sw-track"></span></label>
+        </div>
+      </div>
+
+      <!-- ACCOUNT -->
+      <div class="stab-pane" id="stab-account">
+        <div id="acct-info">
+          <div class="account-card">
+            <div class="gen-orb" style="width:24px;height:24px;border-width:2px"></div>
+            <span style="font-size:13px;color:var(--text2)">Loading account...</span>
+          </div>
+        </div>
+        <p style="font-size:12px;color:var(--text3);line-height:1.6">NexaForge uses a free Puter account to save your work. Image generation is powered by Pollinations AI — no API key or credits required.</p>
+      </div>
+
+      <!-- ABOUT -->
+      <div class="stab-pane" id="stab-about">
+        <div class="about-logo-row">
+          <div style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg viewBox="0 0 28 28" fill="none" width="18" height="18"><path d="M5 14L14 5L23 14L14 23L5 14Z" fill="white" opacity=".9"/><circle cx="14" cy="14" r="4" fill="white"/></svg>
+          </div>
+          <div>
+            <div class="about-name">NexaForge AI</div>
+            <div class="about-ver">Version 3.0 · Powered by Pollinations AI</div>
+          </div>
+        </div>
+        <div class="about-features">
+          <div class="about-feat"><span class="af-icon">🎨</span><div><div class="af-title">Image Generator</div><div class="af-desc">Text-to-image with multiple AI models, style presets, batch generation, favorites and editing.</div></div></div>
+          <div class="about-feat"><span class="af-icon">🖼</span><div><div class="af-title">Image → Code</div><div class="af-desc">Upload any UI screenshot and get pixel-perfect HTML, React, Tailwind, or Vue code.</div></div></div>
+          <div class="about-feat"><span class="af-icon">💬</span><div><div class="af-title">Prompt → Code</div><div class="af-desc">Describe any UI in plain English and get production-ready code with live preview.</div></div></div>
+          <div class="about-feat"><span class="af-icon">⚡</span><div><div class="af-title">Code → Image</div><div class="af-desc">Render HTML/CSS/JS code as a high-quality PNG screenshot.</div></div></div>
+          <div class="about-feat"><span class="af-icon">✏</span><div><div class="af-title">Live Editor</div><div class="af-desc">Split-pane code editor with real-time preview and download support.</div></div></div>
+        </div>
+        <p style="font-size:12px;color:var(--text3);padding-top:12px;border-top:1px solid var(--border)">AI powered by <a href="https://pollinations.ai" target="_blank" style="color:var(--accent);text-decoration:none">Pollinations.ai</a> — free, no API key needed. Built with HTML + vanilla JS.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST HOST -->
+<div id="toast-host"></div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" class="lightbox" style="display:none" onclick="document.getElementById('lightbox').style.display='none'">
+  <img id="lb-img" src="" alt="">
+  <button class="lb-close" onclick="document.getElementById('lightbox').style.display='none'">✕</button>
+  <div class="lb-info" id="lb-info"></div>
+</div>
+
+<!-- TEMPLATES OVERLAY -->
+<div id="tpl-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(6px);z-index:1500;align-items:center;justify-content:center">
+  <div style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--r-2xl);width:560px;max-width:92vw;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow-lg)">
+    <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+      <div style="font-size:18px;font-weight:800;letter-spacing:-.5px">Prompt Templates</div>
+      <button onclick="document.getElementById('tpl-overlay').style.display='none'" style="width:28px;height:28px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div style="overflow-y:auto;padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px" id="tpl-grid"></div>
+  </div>
+</div>
+
+<script defer src="js/app.js"></script>
+</body>
+</html>
