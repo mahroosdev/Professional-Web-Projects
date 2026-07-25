@@ -1,0 +1,1838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>Nexa Folio Ultra V1.0 - Offline Notes and Tasks</title>
+<link rel="manifest" href="manifest.json"/>
+<meta name="theme-color" content="#f0f2f7"/>
+<link rel="apple-touch-icon" href="icon-192.png"/>
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"/>
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png"/>
+<link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+<meta name="description" content="Nexa Folio Ultra V1.0 offline notes and tasks workspace with local storage, settings, themes, manifest, icons, and service worker support."/>
+<script defer src="js/app.js"></script>
+<link rel="stylesheet" href="css/style.css">
+
+
+</head>
+<body>
+
+<div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+<div class="bgrid"></div>
+
+<!-- Mobile overlay -->
+<div id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- Hamburger -->
+<button id="hamburger" onclick="toggleSidebar()" aria-label="Toggle menu">
+  <span></span><span></span><span></span>
+</button>
+
+<!-- Curtain -->
+<div id="curtain">
+  <div class="crt-aura"></div><div class="crt-aura"></div>
+  <div class="crt">
+    <div style="position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:24px">
+      <div class="crt-ring"></div>
+      <div class="crt-icon"><div class="crt-icon-inner">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.5" stroke-linecap="round">
+          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+        </svg>
+      </div></div>
+    </div>
+    <div class="crt-word">
+      <span class="crt-letter" style="animation-delay:0.4s;color:var(--txt2);-webkit-text-fill-color:var(--txt2)">N</span><span class="crt-letter" style="animation-delay:0.52s;color:var(--txt2);-webkit-text-fill-color:var(--txt2)">E</span><span class="crt-letter" style="animation-delay:0.64s;color:var(--txt2);-webkit-text-fill-color:var(--txt2)">X</span><span class="crt-letter" style="animation-delay:0.76s;color:var(--txt2);-webkit-text-fill-color:var(--txt2)">A</span><span style="display:inline-block;width:0.28em"></span><span class="crt-letter accent" style="animation-delay:0.92s">F</span><span class="crt-letter accent" style="animation-delay:1.04s">O</span><span class="crt-letter accent" style="animation-delay:1.16s">L</span><span class="crt-letter accent" style="animation-delay:1.28s">I</span><span class="crt-letter accent" style="animation-delay:1.4s">O</span>
+    </div>
+    <div class="crt-line" style="width:min(240px,70vw);height:1px;background:linear-gradient(90deg,transparent,var(--gb-accent1) 30%,var(--gb-accent2) 70%,transparent);margin:12px auto 14px;opacity:0;animation:ctSubIn 0.5s ease 1.7s forwards"></div>
+    <div class="crt-sub">Notes · Tasks · Focus</div>
+    <div class="crt-dots"><div class="crt-dot"></div><div class="crt-dot"></div><div class="crt-dot"></div></div>
+  </div>
+</div>
+
+<!-- Theme Switcher -->
+<!-- Desktop Settings Button (PC only — replaces old theme switcher) -->
+<div id="desktopSettingsBtn">
+  <button class="desktop-settings-btn" id="desktopSettingsToggle" onclick="toggleDesktopSettings()" title="Settings" aria-label="Open Settings">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="position:relative;z-index:1">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+    </svg>
+  </button>
+</div>
+
+<!-- Desktop Settings Overlay -->
+<div id="desktopSettingsOverlay" onclick="closeDesktopSettings()"></div>
+
+<!-- SIDEBAR -->
+<aside id="sidebar">
+  <div class="sidebar-head">
+    <div class="drawer-head-row">
+      <button id="drawerBackBtn" class="drawer-back-btn" onclick="closeSidebar()" aria-label="Back" title="Back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      <div class="drawer-brand">
+        <div class="folio-logo-icon" id="mobileLogoIconBox" aria-hidden="true">
+          <svg id="mobileLogoIconNotes" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.6" stroke-linecap="round">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+          </svg>
+          <svg id="mobileLogoIconTasks" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.6" stroke-linecap="round" style="display:none;position:absolute">
+            <polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+          </svg>
+        </div>
+        <div class="drawer-title">FOL<span class="accent">IO</span><span class="tagline">Workspace</span></div>
+      </div>
+      <div class="drawer-spacer" aria-hidden="true"></div>
+    </div>
+    <div class="folio-logo-wrap">
+      <div class="folio-logo-hero">
+        <div class="folio-logo-icon" id="logoIconBox">
+          <!-- Notes icon (default) -->
+          <svg id="logoIconNotes" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.5" stroke-linecap="round">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+          <!-- Tasks icon (hidden by default) -->
+          <svg id="logoIconTasks" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.5" stroke-linecap="round" style="display:none;position:absolute">
+            <polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+          </svg>
+        </div>
+        <div class="app-name">FOL<span class="accent">IO</span><span class="tagline">Workspace</span></div>
+      </div>
+    </div>
+    <div id="sidebarTimeDisplay" class="sidebar-time-display" style="display:none">
+      <div class="sidebar-time-flag" id="sidebarTimeFlag">
+        <svg class="globe-svg" width="38" height="38" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="gGlow" x="-40%" y="-40%" width="180%" height="180%" color-interpolation-filters="sRGB">
+              <feGaussianBlur stdDeviation="2.2" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- Layer 0: Pulsing aura ring outside globe -->
+          <circle class="globe-aura" cx="50" cy="50" r="24"/>
+
+          <!-- Layer 1: Orbit ring 1 — tilted -20deg -->
+          <ellipse class="orbit orbit-1" cx="50" cy="50" rx="34" ry="10" transform="rotate(-18 50 50)"/>
+
+          <!-- Layer 2: Orbit ring 2 — tilted 52deg (cross-orbit) -->
+          <ellipse class="orbit orbit-2" cx="50" cy="50" rx="31" ry="8" transform="rotate(52 50 50)"/>
+
+          <!-- Layer 3: Globe body — latitude + longitude grid lines -->
+          <circle class="globe-core" cx="50" cy="50" r="21"/>
+          <!-- Equator -->
+          <ellipse class="lat-line lat-eq" cx="50" cy="50" rx="21" ry="7"/>
+          <!-- Upper latitude -->
+          <ellipse class="lat-line lat-up" cx="50" cy="38" rx="16.5" ry="5.2"/>
+          <!-- Lower latitude -->
+          <ellipse class="lat-line lat-dn" cx="50" cy="62" rx="16.5" ry="5.2"/>
+          <!-- Central longitude line -->
+          <ellipse class="lng-line" cx="50" cy="50" rx="7" ry="21"/>
+
+          <!-- Layer 4: Orbiting particles -->
+          <!-- Particle 1 — on orbit ring 1 plane -->
+          <g class="p-wrap p-wrap-1">
+            <circle class="particle" cx="84" cy="50" r="2.2"/>
+          </g>
+          <!-- Particle 2 — on orbit ring 2 plane, counter-rotates -->
+          <g class="p-wrap p-wrap-2">
+            <circle class="particle" cx="50" cy="19" r="1.7"/>
+          </g>
+          <!-- Particle 3 — faint trailing dot -->
+          <g class="p-wrap p-wrap-3">
+            <circle class="particle" cx="18" cy="50" r="1.3" opacity="0.55"/>
+          </g>
+        </svg>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0">
+        <div class="sidebar-time-text" id="sidebarTimeText">--:-- --</div>
+        <div class="sidebar-time-zone" id="sidebarTimeZone">Loading...</div>
+        <div class="sidebar-time-country" id="sidebarTimeCountry" style="display:none"></div>
+      </div>
+    </div>
+    <div class="sec-nav">
+      <button class="sec-btn active" id="secNotes" onclick="switchSection('notes')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Notes
+      </button>
+      <button class="sec-btn" id="secTasks" onclick="switchSection('tasks')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Tasks
+        <span class="sec-badge" id="taskBadge">0</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Notes sidebar panel -->
+  <div id="notesSidePanel">
+    <div class="sidebar-section-label">Notes</div>
+    <button class="new-btn" onclick="newNote();closeSidebar()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      New Note
+    </button>
+    <div class="search-wrap" style="margin-top:12px">
+      <input class="search-input" type="text" placeholder="Search notes…" oninput="filterNotes(this.value)"/>
+    </div>
+    <div class="notes-list" id="notesList"></div>
+  </div>
+
+  <!-- Tasks sidebar panel -->
+  <div id="tasksSidePanel">
+    <div class="task-sidebar-inner">
+      <div class="sidebar-section-label">Tasks</div>
+      <button class="new-btn" onclick="openModal()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Task
+      </button>
+      <div class="mobile-task-controls" style="display:none;margin-top:8px">
+        <button class="mobile-task-btn active" id="mTaskListBtn" onclick="setView('list');closeSidebar()">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          List
+        </button>
+        <button class="mobile-task-btn" id="mTaskBoardBtn" onclick="setView('kanban');closeSidebar()">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="5" height="18" rx="1"/><rect x="10" y="3" width="5" height="11" rx="1"/><rect x="17" y="3" width="5" height="15" rx="1"/></svg>
+          Board
+        </button>
+      </div>
+      <div class="ts-filter-scroll" style="margin-top:12px">
+        <div class="ts-section-label">Filter</div>
+        <div class="ts-filter-list">
+          <div class="ts-filter" onclick="setTaskFilter('all',this)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            All Tasks
+            <span class="ts-filter-count" id="fc-all">0</span>
+          </div>
+          <div class="ts-filter" onclick="setTaskFilter('today',this)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Today
+            <span class="ts-filter-count" id="fc-today">0</span>
+          </div>
+          <div class="ts-filter" onclick="setTaskFilter('upcoming',this)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Upcoming
+            <span class="ts-filter-count" id="fc-upcoming">0</span>
+          </div>
+          <div class="ts-filter" onclick="setTaskFilter('done',this)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Completed
+            <span class="ts-filter-count" id="fc-done">0</span>
+          </div>
+          <div class="ts-filter overdue-tab" onclick="setTaskFilter('overdue',this)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Overdue
+            <span class="ts-filter-count" id="fc-overdue">0</span>
+          </div>
+        </div>
+        <div class="ts-divider"></div>
+        <div class="ts-section-label">Priority</div>
+        <div class="ts-filter-list">
+          <div class="ts-filter" onclick="setTaskFilter('high',this)">
+            <div class="ts-prio-dot" style="background:#f85149;box-shadow:0 0 6px #f8514960"></div>
+            High Priority
+            <span class="ts-filter-count" id="fc-high">0</span>
+          </div>
+          <div class="ts-filter" onclick="setTaskFilter('medium',this)">
+            <div class="ts-prio-dot" style="background:#f0c133;box-shadow:0 0 6px #f0c13360"></div>
+            Medium
+            <span class="ts-filter-count" id="fc-medium">0</span>
+          </div>
+          <div class="ts-filter" onclick="setTaskFilter('low',this)">
+            <div class="ts-prio-dot" style="background:#00c97a;box-shadow:0 0 6px #00c97a60"></div>
+            Low
+            <span class="ts-filter-count" id="fc-low">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main>
+  <!-- Home main -->
+  <div id="homeMain" class="home-main">
+    <div class="home-header">
+      <div class="home-title">FOL<span class="home-accent">IO</span><span class="home-tagline">Workspace</span></div>
+      <div class="home-greet-bar" id="homeGreetBar">
+        <span class="home-greet-dot"></span>
+        <span class="home-greet-date" id="homeGreetDate">—</span>
+      </div>
+      <div class="home-greet" id="homeGreetMsg">—</div>
+    </div>
+    <div class="home-cards">
+      <div class="home-card">
+        <div class="home-card-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <div class="home-card-body">
+          <div class="home-card-value" id="homeNotesCount">0</div>
+          <div class="home-card-label">Notes</div>
+        </div>
+      </div>
+      <div class="home-card">
+        <div class="home-card-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <div class="home-card-body">
+          <div class="home-card-value" id="homeTasksCount">0</div>
+          <div class="home-card-label">Tasks</div>
+        </div>
+      </div>
+      <div class="home-card">
+        <div class="home-card-icon" style="color:var(--am)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="home-card-body">
+          <div class="home-card-value" id="homePendingCount">0</div>
+          <div class="home-card-label">Pending Tasks</div>
+        </div>
+      </div>
+      <div class="home-card">
+        <div class="home-card-icon" style="color:#4ade80;border-color:rgba(74,222,128,0.2);background:rgba(74,222,128,0.06)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div class="home-card-body">
+          <div class="home-card-value" id="homeCompletedCount">0</div>
+          <div class="home-card-label">Completed</div>
+        </div>
+      </div>
+    </div>
+    <div class="home-actions">
+      <button class="home-action-btn" onclick="switchSection('notes')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Open Notes
+      </button>
+      <button class="home-action-btn" onclick="switchSection('tasks')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Open Tasks
+      </button>
+    </div>
+    <div class="home-analytics-grid">
+      <div class="home-analytics-card">
+        <div class="home-analytics-title">Weekly Activity</div>
+        <div class="home-chart" id="homeActivityChart"></div>
+        <div class="home-chart-labels" id="homeActivityLabels"></div>
+      </div>
+      <div class="home-analytics-card home-pulse-card">
+        <div class="home-analytics-title">Momentum Pulse</div>
+        <div class="home-pulse-row">
+          <div class="home-pulse-ring" id="homePulseRing" aria-hidden="true"></div>
+          <div class="home-pulse-meta">
+            <div class="home-pulse-score" id="homePulsePct">0%</div>
+            <div class="home-pulse-sub" id="homePulseText">0 done · 0 pending</div>
+          </div>
+        </div>
+        <div class="home-pulse-spark" id="homePulseSpark"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notes main -->
+  <div id="notesMain">
+    <button class="floating-icon-btn right" id="notesHomeBtn" onclick="switchSection('home')" aria-label="Exit to home" title="Exit to Home">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
+        <path d="M9 21V12h6v9"/>
+      </svg>
+    </button>
+    <div id="notesEditorWrap" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
+      <div class="toolbar" id="notesToolbar">
+        <!-- Group 1: Text formatting -->
+        <button class="tb-btn tb-tool" data-tool="bold" title="Bold (Ctrl+B)" onclick="execFmt('bold')"><b>B</b></button>
+        <button class="tb-btn tb-tool" data-tool="italic" title="Italic (Ctrl+I)" onclick="execFmt('italic')"><i>I</i></button>
+        <button class="tb-btn tb-tool" data-tool="underline" title="Underline (Ctrl+U)" onclick="execFmt('underline')"><u>U</u></button>
+        <button class="tb-btn tb-tool" data-tool="strike" title="Strikethrough" onclick="execFmt('strikeThrough')" style="text-decoration:line-through;font-size:13px;font-weight:700">S</button>
+        <div class="tb-sep tb-tool" data-tool="sep1"></div>
+        <!-- Group 2: Headings -->
+        <button class="tb-btn tb-btn-sm tb-tool" data-tool="h1" title="Heading 1" onclick="execHeading('h1')" style="font-size:10px;font-weight:800;letter-spacing:.04em">H1</button>
+        <button class="tb-btn tb-btn-sm tb-tool" data-tool="h2" title="Heading 2" onclick="execHeading('h2')" style="font-size:10px;font-weight:800;letter-spacing:.04em">H2</button>
+        <div class="tb-sep tb-tool" data-tool="sep2"></div>
+        <!-- Group 3: Lists -->
+        <button class="tb-btn tb-tool" data-tool="ul" title="Bullet List" onclick="execFmt('insertUnorderedList')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><circle cx="4" cy="7" r="1.8" fill="currentColor" stroke="none"/><circle cx="4" cy="13" r="1.8" fill="currentColor" stroke="none"/><circle cx="4" cy="19" r="1.8" fill="currentColor" stroke="none"/><line x1="9" y1="7" x2="21" y2="7"/><line x1="9" y1="13" x2="21" y2="13"/><line x1="9" y1="19" x2="21" y2="19"/></svg>
+        </button>
+        <button class="tb-btn tb-tool" data-tool="ol" title="Numbered List" onclick="execFmt('insertOrderedList')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 5h1v4" stroke-width="2"/><path d="M4 11h2v1.5L4 14h2" stroke-width="2"/><path d="M4 17h2v1H4v1h2" stroke-width="2"/></svg>
+        </button>
+        <div class="tb-sep tb-tool" data-tool="sep3"></div>
+        <!-- Group 4: Highlight -->
+        <div class="tb-highlight-wrap tb-tool" data-tool="highlight">
+          <button class="tb-btn" id="tbHighlightBtn" title="Highlight Text" onclick="toggleHighlightPicker(event)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15.5 2.1L20 6.5 8 18.5l-5 1 1-5L15.5 2.1z"/><line x1="3" y1="22" x2="21" y2="22"/><rect x="9" y="19" width="6" height="3" rx="1" fill="var(--hl-active,#fde68a)" stroke="none"/></svg>
+          </button>
+          <div class="tb-highlight-picker" id="tbHighlightPicker">
+            <div class="hl-swatch" style="background:#fde68a" onclick="applyHighlight('#fde68a')" title="Yellow"></div>
+            <div class="hl-swatch" style="background:#bbf7d0" onclick="applyHighlight('#bbf7d0')" title="Green"></div>
+            <div class="hl-swatch" style="background:#bfdbfe" onclick="applyHighlight('#bfdbfe')" title="Blue"></div>
+            <div class="hl-swatch" style="background:#fecaca" onclick="applyHighlight('#fecaca')" title="Pink"></div>
+            <div class="hl-swatch" style="background:#e9d5ff" onclick="applyHighlight('#e9d5ff')" title="Purple"></div>
+            <div class="hl-swatch hl-clear" onclick="applyHighlight(null)" title="Clear highlight">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="tb-sep tb-tool" data-tool="sep4"></div>
+        <!-- Group 5: Align -->
+        <button class="tb-btn tb-tool" data-tool="alignLeft" title="Align Left" onclick="execFmt('justifyLeft')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><line x1="3" y1="5" x2="21" y2="5"/><line x1="3" y1="10" x2="15" y2="10"/><line x1="3" y1="15" x2="19" y2="15"/><line x1="3" y1="20" x2="12" y2="20"/></svg>
+        </button>
+        <button class="tb-btn tb-tool" data-tool="alignCenter" title="Center" onclick="execFmt('justifyCenter')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><line x1="3" y1="5" x2="21" y2="5"/><line x1="6" y1="10" x2="18" y2="10"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="8" y1="20" x2="16" y2="20"/></svg>
+        </button>
+        <div class="tb-sep tb-tool" data-tool="sep5"></div>
+        <!-- Group 6: Undo / Redo -->
+        <button class="tb-btn tb-tool" data-tool="undo" title="Undo (Ctrl+Z)" onclick="execFmt('undo')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/></svg>
+        </button>
+        <button class="tb-btn tb-tool" data-tool="redo" title="Redo (Ctrl+Y)" onclick="execFmt('redo')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.49-4.95"/></svg>
+        </button>
+        <div class="tb-sep tb-tool" data-tool="sep6"></div>
+        <!-- Group 7: Power tools -->
+        <button class="tb-btn tb-tool" data-tool="focus" id="tbFocusBtn" title="Focus Mode — distraction-free writing" onclick="toggleFocusMode()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+        </button>
+        <button class="tb-btn tb-tool" data-tool="copy" title="Copy note to clipboard" onclick="copyNote()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        </button>
+        <button class="tb-btn tb-tool" data-tool="export" title="Export as .txt file" onclick="exportNote()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </button>
+        <button class="tb-btn tb-tool" data-tool="wordcount" id="tbWordCountBtn" title="Toggle word count" onclick="toggleWordCount()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M4 7h16M4 12h10M4 17h6"/><circle cx="19" cy="17" r="3"/><path d="M21 14l-1 1"/></svg>
+        </button>
+        <div class="tb-sep tb-tool" data-tool="sep7"></div>
+        <!-- Focus Timer -->
+        <button class="tb-btn tb-tool" data-tool="rtltimer" id="tbRtlBtn" title="Start focus timer" onclick="tbRtlToggle()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </button>
+
+        <div class="tb-sep"></div>
+        <!-- Tag + Delete (always visible) -->
+        <select class="tag-select" id="tagSelect" onchange="handleTagSelect(this.value)">
+          <option value="">No Tag</option>
+          <option value="Personal">Personal</option>
+          <option value="Work">Work</option>
+          <option value="Ideas">Ideas</option>
+          <option value="Important">Important</option>
+          <option value="__other__">✦ Other…</option>
+        </select>
+        <button class="delete-btn" onclick="deleteNote()">Delete</button>
+      </div>
+      <!-- Other tag input (shown when "Other" selected) -->
+      <div id="tagOtherWrap" style="display:none;padding:8px 36px 0;background:var(--card);border-bottom:1px solid var(--gb)">
+        <div style="display:flex;gap:8px;align-items:center">
+          <input class="modal-input" id="tagOtherInput" placeholder="Enter custom tag…" style="padding:7px 12px;max-width:220px" oninput="applyCustomTag()" />
+          <button class="modal-cancel" style="padding:6px 12px;font-size:11px" onclick="clearCustomTag()">Clear</button>
+        </div>
+      </div>
+      <!-- Timer bar lives here so it flows in the notes layout -->
+      <div id="focusTimerBar" class="session-timer-bar" role="timer" aria-live="off">
+        <div class="ftb-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="ftb-meta">
+          <span class="ftb-label">Focus Session</span>
+          <span class="ftb-time rtl-time-display" id="rtlTimeDisplay">25:00</span>
+        </div>
+        <div class="ftb-progress-wrap">
+          <div class="ftb-progress-track">
+            <div class="ftb-progress-fill" id="ftbProgressFill"></div>
+          </div>
+          <div class="ftb-progress-label" id="ftbProgressLabel"></div>
+        </div>
+        <div class="ftb-controls">
+          <button class="ftb-ctrl-btn" id="ftbPauseBtn" onclick="rtlTogglePause()" title="Pause / Resume" aria-label="Pause timer">
+            <svg class="rtl-pause-icon" id="rtlPauseIcon" width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="5" y="3" width="4" height="18" rx="1"/><rect x="15" y="3" width="4" height="18" rx="1"/>
+            </svg>
+          </button>
+          <button class="ftb-ctrl-btn ftb-stop" onclick="rtlStop(true)" title="End session" aria-label="Stop session">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="editor-area">
+        <input class="title-input" id="titleInput" placeholder="Note title…" oninput="saveNote()"/>
+        <div class="date-row" id="dateRow"></div>
+        <div id="bodyEditor" contenteditable="true" data-placeholder="Start writing… watch the letters glow ✦" spellcheck="true"></div>
+      </div>
+      <div class="char-count" id="charCount">0 characters</div>
+    </div>
+    <div id="notesEmptyState">
+      <div class="empty-inner">
+        <div class="empty-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.3" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <p>Select or create a note</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tasks main -->
+  <div id="tasksMain">
+    <button class="floating-icon-btn right" id="tasksExitBtn" onclick="switchSection('home')" aria-label="Exit to home" title="Exit to Home">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
+        <path d="M9 21V12h6v9"/>
+      </svg>
+    </button>
+    <!-- Tasks Focus Mode toolbar (mobile) — mirrors notes focus-toolbar -->
+    <div id="tasksFocusExitPill">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><polyline points="9 3 9 7"/><polyline points="15 3 15 7"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+      <span class="tfe-label">Focus Mode</span>
+      <button class="tfe-btn" onclick="toggleTasksFocus()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Exit Focus
+      </button>
+    </div>
+    <!-- Tasks Empty State -->
+    <div id="tasksEmptyState" style="display:flex;flex-direction:column;flex:1;align-items:center;justify-content:center">
+      <div class="empty-inner">
+        <div class="empty-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.3" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><polyline points="9 3 9 7"/><polyline points="15 3 15 7"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg></div>
+        <p>Select or create a task</p>
+      </div>
+    </div>
+
+    <!-- Tasks Content (header + list) -->
+    <div class="tm-header-wrap" id="tmHeaderWrap" style="display:none">
+    <div class="tm-topbar">
+      <div class="tm-title-area">
+        <div class="tm-section-title" id="tmSectionTitle">All Tasks</div>
+        <div class="tm-section-sub" id="tmSectionSub">0 tasks · 0 completed</div>
+      </div>
+      <!-- Mobile-only session timer button — left of Focus button -->
+      <button class="mobile-timer-btn" id="mobileTimerBtn" onclick="tbTasksRtlToggle()" title="Start focus timer" aria-label="Toggle focus timer">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </button>
+      <!-- Tasks Focus Mode button — mobile only, visible on All Tasks filter -->
+      <button class="tasks-focus-btn" id="tasksFocusBtn" onclick="toggleTasksFocus()" title="Focus Mode" aria-label="Toggle Focus Mode">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/>
+        </svg>
+      </button>
+      <div class="tm-actions">
+        <div class="tm-view-btns">
+          <button class="tm-view-btn active" id="vList" onclick="setView('list')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            List
+          </button>
+          <button class="tm-view-btn" id="vKanban" onclick="setView('kanban')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="5" height="18" rx="1"/><rect x="10" y="3" width="5" height="11" rx="1"/><rect x="17" y="3" width="5" height="15" rx="1"/></svg>
+            Board
+          </button>
+        </div>
+        <button class="tm-add-btn" onclick="openModal()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span class="tm-add-label">Add Task</span>
+        </button>
+        <!-- Focus Session Timer toggle for Tasks -->
+        <button class="tm-timer-btn" id="tmRtlBtn" title="Start focus timer" onclick="tbTasksRtlToggle()" style="display:flex;align-items:center;gap:5px;padding:5px 10px;border:1px solid var(--btn-border);background:var(--btn-bg);color:var(--txt3);border-radius:8px;cursor:pointer;font-size:11px;font-weight:600;font-family:'Inter',sans-serif;letter-spacing:.04em;transition:all .18s ease;flex-shrink:0">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span id="tmRtlBtnLabel">Timer</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Focus Session Timer — sits under the main topbar when active -->
+    <div id="tasksTimerBar" class="session-timer-bar" role="timer" aria-live="off">
+      <div class="ftb-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div class="ftb-meta">
+        <span class="ftb-label">Focus Session</span>
+        <span class="ftb-time rtl-time-display">25:00</span>
+      </div>
+      <div class="ftb-progress-wrap">
+        <div class="ftb-progress-track">
+          <div class="ftb-progress-fill"></div>
+        </div>
+        <div class="ftb-progress-label"></div>
+      </div>
+      <div class="ftb-controls">
+        <button class="ftb-ctrl-btn" onclick="rtlTogglePause()" title="Pause / Resume" aria-label="Pause timer">
+          <svg class="rtl-pause-icon" width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="5" y="3" width="4" height="18" rx="1"/><rect x="15" y="3" width="4" height="18" rx="1"/>
+          </svg>
+        </button>
+        <button class="ftb-ctrl-btn ftb-stop" onclick="rtlStop(true)" title="End session" aria-label="Stop session">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="tm-stats" id="tmStatsBar">
+      <div class="tm-stat">
+        <div class="tm-stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div><div class="tm-stat-val" id="statTotal">0</div><div class="tm-stat-lbl">Total</div></div>
+      </div>
+      <div class="tm-stat">
+        <div class="tm-stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div><div class="tm-stat-val" id="statDone">0</div><div class="tm-stat-lbl">Done</div></div>
+      </div>
+      <div class="tm-stat">
+        <div class="tm-stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#f85149" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+        <div><div class="tm-stat-val" id="statOverdue" style="color:#f87171">0</div><div class="tm-stat-lbl">Overdue</div></div>
+      </div>
+      <div class="tm-stat">
+        <div class="tm-stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#f0c133" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div><div class="tm-stat-val" id="statToday" style="color:#fbbf24">0</div><div class="tm-stat-lbl">Today</div></div>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="tm-progress-wrap">
+      <div class="tm-progress-bar"><div class="tm-progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="tm-progress-label"><span id="progressLabel">No tasks yet</span><span id="progressPct">—</span></div>
+    </div>
+    </div><!-- end tm-header-wrap -->
+
+    <!-- Task Content -->
+    <div class="tm-content" id="tmContent"></div>
+  </div>
+</main>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-overlay" id="taskModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-head-title" id="modalTitle">New Task</div>
+      <button class="modal-close" onclick="closeModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">Task Title *</label>
+      <input class="modal-input" id="mTitle" placeholder="What needs to be done?"/>
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">Description</label>
+      <textarea class="modal-input" id="mDesc" placeholder="Add details, context, or notes…"></textarea>
+    </div>
+    <div class="modal-row">
+      <div class="modal-field" style="margin-bottom:0">
+        <label class="modal-label">Priority</label>
+        <select class="modal-select" id="mPrio">
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+          <option value="low">Low</option>
+        </select>
+      </div>
+      <div class="modal-field" style="margin-bottom:0">
+        <label class="modal-label">Category</label>
+        <select class="modal-select" id="mCat" onchange="handleCatSelect(this.value)">
+          <option value="">None</option>
+          <option value="Work">Work</option>
+          <option value="Personal">Personal</option>
+          <option value="Ideas">Ideas</option>
+          <option value="Health">Health</option>
+          <option value="Finance">Finance</option>
+          <option value="__other__">✦ Other…</option>
+        </select>
+      </div>
+      <div class="modal-field" style="margin-bottom:0">
+        <label class="modal-label">Due Date</label>
+        <input class="modal-input" id="mDue" type="date" style="padding:8px 12px"/>
+      </div>
+    </div>
+    <!-- Other category input -->
+    <div class="other-input-wrap" id="catOtherWrap">
+      <p class="other-hint">Enter a custom category name:</p>
+      <input class="modal-input" id="mCatOther" placeholder="e.g. Travel, Learning, Art…"/>
+    </div>
+    <div class="modal-field" style="margin-top:16px">
+      <label class="modal-label">Subtasks</label>
+      <div class="subtask-add-row">
+        <input class="subtask-add-input" id="mSubInput" placeholder="Add a subtask…" onkeydown="if(event.key==='Enter'){addModalSubtask()}"/>
+        <button class="subtask-add-btn" onclick="addModalSubtask()">Add</button>
+      </div>
+      <div class="subtask-list-modal" id="mSubList"></div>
+    </div>
+    <div class="modal-field" style="margin-top:4px">
+      <label class="modal-label">Status</label>
+      <select class="modal-select" id="mStatus">
+        <option value="todo">To Do</option>
+        <option value="inprogress">In Progress</option>
+        <option value="done">Done</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-save" onclick="saveTask()">Save Task</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Bottom Navigation (Mobile) -->
+<nav id="bottomNav" class="bottom-nav">
+  <button class="nav-btn active" data-section="home" onclick="switchSection('home')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 11.5L12 4l9 7.5"/><path d="M5 10.5V20h14v-9.5"/></svg>
+    <span>Home</span>
+  </button>
+  <button class="nav-btn" data-section="notes" onclick="switchSection('notes')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    <span>Notes</span>
+  </button>
+  <button class="nav-btn" data-section="tasks" onclick="switchSection('tasks')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+    <span>Tasks</span>
+  </button>
+  <button class="nav-btn" data-section="settings" onclick="switchSection('settings')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001 1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    <span>Settings</span>
+  </button>
+</nav>
+
+<!-- Floating Action Button -->
+<button id="fab" class="fab" onclick="handleFabClick()">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+</button>
+<div id="fabActionSheet" class="fab-action-sheet">
+  <button class="fab-action-sheet-btn" onclick="fabCreateNote()">New Note</button>
+  <button class="fab-action-sheet-btn" onclick="fabCreateTask()">New Task</button>
+</div>
+
+<!-- ✦ SESSION END TOAST -->
+<div id="focusSessionToast" role="status" aria-live="polite">
+  <div class="fst-header">
+    <div class="fst-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div>
+      <div class="fst-title">Session Complete</div>
+      <div class="fst-sub" id="fstSub">Your focus session has ended.</div>
+    </div>
+  </div>
+  <div class="fst-time-row">
+    <div class="fst-time-block">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span id="fstStatTime">—</span>
+      <span class="fst-time-unit">min focused</span>
+    </div>
+  </div>
+  <div class="fst-btns">
+    <button class="fst-btn" onclick="rtlDismiss()">Dismiss</button>
+    <button class="fst-btn primary" onclick="rtlRestart()">New Session</button>
+  </div>
+</div>
+
+<!-- FOCUS MODE OVERLAY -->
+<!-- FOCUS MODE OVERLAY -->
+<div id="focusModeOverlay">
+  <div class="focus-toolbar">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    <span class="focus-title" id="focusTitleLabel">Focus Mode</span>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span id="focusWordMeta" style="font-size:11px;color:var(--txt3);letter-spacing:.08em"></span>
+      <button class="focus-exit-btn" onclick="toggleFocusMode()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Exit Focus
+      </button>
+    </div>
+  </div>
+  <div class="focus-editor-wrap">
+    <div class="focus-editor-inner">
+      <div id="focusTitleDisplay" style="font-family:'Playfair Display',serif;font-size:38px;font-weight:300;color:var(--txt);margin-bottom:12px;line-height:1.15;letter-spacing:-0.01em;"></div>
+      <div id="focusDateDisplay" style="font-size:9px;color:var(--txt3);letter-spacing:.18em;margin-bottom:28px;font-weight:700;text-transform:uppercase;display:flex;align-items:center;gap:12px">
+        <span style="width:18px;height:1px;background:var(--grad);border-radius:1px;display:inline-block"></span>
+        <span id="focusDateText"></span>
+      </div>
+      <div id="focusBodyMirror" style="font-family:'Inter',sans-serif;font-size:18px;line-height:2;color:var(--txt);white-space:pre-wrap;word-break:break-word;min-height:400px;outline:none;caret-color:var(--g2)" contenteditable="true" spellcheck="true"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Panel (for mobile) -->
+<div id="settingsPanel" class="settings-panel">
+  <!-- ════ PC DIALOG WRAPPER (desktop only) ════ -->
+  <div id="pcSettingsDialog">
+
+  <!-- ── LEFT NAV SIDEBAR (desktop only) ── -->
+  <div id="pcSettingsNav">
+    <div class="pc-snav-brand">
+      <div class="pc-snav-brand-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.8" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      <div class="pc-snav-brand-txt">
+        <div class="pc-snav-brand-title">FOL<span style="font-style:italic;color:var(--g)">IO</span></div>
+        <div class="pc-snav-brand-sub">Settings</div>
+      </div>
+    </div>
+    <div class="pc-snav-list">
+      <div class="pc-snav-section-label">Appearance</div>
+      <button class="pc-snav-item active" data-pcsec="themes" onclick="pcSettingsSec('themes',this)">
+        <div class="pc-snav-icon">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M7 17a5 5 0 010-10M17 17a5 5 0 000-10"/></svg>
+        </div>
+        Theme
+      </button>
+      <div class="pc-snav-section-label" style="margin-top:4px">Customize</div>
+      <button class="pc-snav-item" data-pcsec="notestyle" onclick="pcSettingsSec('notestyle',this)">
+        <div class="pc-snav-icon">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+        </div>
+        Note Style
+      </button>
+      <button class="pc-snav-item" data-pcsec="editorprefs" onclick="pcSettingsSec('editorprefs',this)">
+        <div class="pc-snav-icon">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </div>
+        Editor
+      </button>
+      <button class="pc-snav-item" data-pcsec="rtlsession" onclick="pcSettingsSec('rtlsession',this)">
+        <div class="pc-snav-icon">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 3h14M6 3v5l-2 3 2 3v5h12v-5l2-3-2-3V3"/><line x1="12" y1="9" x2="12" y2="15"/></svg>
+        </div>
+        Session Timer
+      </button>
+      <button class="pc-snav-item" data-pcsec="toolbar" onclick="pcSettingsSec('toolbar',this)">
+        <div class="pc-snav-icon">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        Toolbar
+      </button>
+      <div class="pc-snav-section-label" style="margin-top:4px">System</div>
+      <button class="pc-snav-item" data-pcsec="timezone" onclick="pcSettingsSec('timezone',this)">
+        <div class="pc-snav-icon">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        Time &amp; Zone
+      </button>
+      <button class="pc-snav-item" data-pcsec="datastorage" onclick="pcSettingsSec('datastorage',this)">
+        <div class="pc-snav-icon">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg>
+        </div>
+        Data Storage
+      </button>
+      <div class="pc-snav-section-label" style="margin-top:4px">Info</div>
+      <button class="pc-snav-item" data-pcsec="privacy" onclick="pcSettingsSec('privacy',this)">
+        <div class="pc-snav-icon">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        Privacy
+      </button>
+      <button class="pc-snav-item" data-pcsec="about" onclick="pcSettingsSec('about',this)">
+        <div class="pc-snav-icon">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        About
+      </button>
+      <button class="pc-snav-item" data-pcsec="support" onclick="pcSettingsSec('support',this)">
+        <div class="pc-snav-icon">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        Support
+      </button>
+      <button class="pc-snav-item" data-pcsec="dangerzone" onclick="pcSettingsSec('dangerzone',this)" style="color:#f87171">
+        <div class="pc-snav-icon">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        Danger
+      </button>
+    </div>
+    <div class="pc-snav-close">
+      <button class="pc-snav-close-btn" onclick="settingsClose()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        Close Settings
+      </button>
+    </div>
+  </div><!-- /pcSettingsNav -->
+
+  <!-- Mobile sticky header — OUTSIDE scroll container so it never moves -->
+  <div class="settings-head">
+    <button class="settings-back-btn" onclick="settingsClose()" aria-label="Close settings" title="Close Settings">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <h3>Settings</h3>
+    <div class="ms-head-spacer"></div>
+    <div class="ms-hero-sub">Workspace Configuration</div>
+    <div class="ms-hero-pills">
+      <div class="ms-hero-badge-v">V1.0</div>
+      <div class="ms-hero-live">
+        <div class="ms-hero-live-dot"></div>
+        All Local
+      </div>
+    </div>
+    <div class="ms-hero-gutter"></div>
+  </div>
+
+  <div class="settings-content">
+
+    <!-- ════════════════════════════════════
+         PC SECTION PANELS (desktop only)
+    ════════════════════════════════════ -->
+
+    <!-- PC: THEMES SECTION -->
+    <div class="pc-section-panel pc-active" id="pcSec-themes">
+      <div class="pc-section-titlebar">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M7 17a5 5 0 010-10M17 17a5 5 0 000-10"/></svg>
+          Theme <span>Appearance</span>
+        </h4>
+      </div>
+      <div class="pc-content-body">
+        <div class="pc-settings-block">
+          <div class="pc-settings-block-label">Choose Your Theme</div>
+          <div class="pc-themes-grid">
+            <div class="pc-theme-card" data-theme="blanc" onclick="setTheme('blanc',this);pcUpdateThemeCards('blanc')">
+              <div class="pc-theme-check"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#1e293b" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="pc-theme-swatch" style="background:linear-gradient(135deg,#f0f2f7,#2563eb)"></div>
+              <div class="pc-theme-name">White</div>
+            </div>
+            <div class="pc-theme-card" data-theme="obsidian" onclick="setTheme('obsidian',this);pcUpdateThemeCards('obsidian')">
+              <div class="pc-theme-check"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="pc-theme-swatch" style="background:linear-gradient(135deg,#000,#9ca3af)"></div>
+              <div class="pc-theme-name">Black</div>
+            </div>
+            <div class="pc-theme-card" data-theme="void" onclick="setTheme('void',this);pcUpdateThemeCards('void')">
+              <div class="pc-theme-check"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="pc-theme-swatch" style="background:linear-gradient(135deg,#030305,#9b7ff4)"></div>
+              <div class="pc-theme-name">Purple</div>
+            </div>
+            <div class="pc-theme-card" data-theme="aerium" onclick="setTheme('aerium',this);pcUpdateThemeCards('aerium')">
+              <div class="pc-theme-check"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="pc-theme-swatch" style="background:linear-gradient(135deg,#080c10,#7eb8f7)"></div>
+              <div class="pc-theme-name">Blue</div>
+            </div>
+            <div class="pc-theme-card" data-theme="jewel" onclick="setTheme('jewel',this);pcUpdateThemeCards('jewel')">
+              <div class="pc-theme-check"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="pc-theme-swatch" style="background:linear-gradient(135deg,#120808,#c97a00)"></div>
+              <div class="pc-theme-name">Gold</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PC: NOTE STYLE SECTION -->
+    <div class="pc-section-panel" id="pcSec-notestyle">
+      <div class="pc-section-titlebar">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+          Note Style <span>Customize</span>
+        </h4>
+      </div>
+      <div class="pc-content-body" id="pcNoteStyleBody">
+        <!-- Populated from existing accordion content by JS -->
+      </div>
+    </div>
+
+    <!-- PC: EDITOR SECTION -->
+    <div class="pc-section-panel" id="pcSec-editorprefs">
+      <div class="pc-section-titlebar">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.8" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Editor Preferences <span>Customize</span>
+        </h4>
+      </div>
+      <div class="pc-content-body" id="pcEditorBody">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- PC: SESSION TIMER SECTION -->
+    <div class="pc-section-panel" id="pcSec-rtlsession">
+      <div class="pc-section-titlebar">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.8" stroke-linecap="round"><path d="M5 3h14M6 3v5l-2 3 2 3v5h12v-5l2-3-2-3V3"/><line x1="12" y1="9" x2="12" y2="15"/></svg>
+          Session Timer <span>Customize</span>
+        </h4>
+      </div>
+      <div class="pc-content-body" id="pcRtlBody">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- PC: TOOLBAR SECTION -->
+    <div class="pc-section-panel" id="pcSec-toolbar">
+      <div class="pc-section-titlebar">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          Customize Toolbar <span>Customize</span>
+        </h4>
+      </div>
+      <div class="pc-content-body" id="pcToolbarBody">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- PC: TIME ZONE SECTION -->
+    <div class="pc-section-panel" id="pcSec-timezone">
+      <div class="pc-section-titlebar">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Time &amp; Timezone <span>System</span>
+        </h4>
+      </div>
+      <div class="pc-content-body" id="pcTimezoneBody">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- PC: DATA STORAGE SECTION -->
+    <div class="pc-section-panel" id="pcSec-datastorage">
+      <div class="pc-section-titlebar">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.8" stroke-linecap="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg>
+          Data Storage <span>System</span>
+        </h4>
+      </div>
+      <div class="pc-content-body" id="pcDatastorageBody">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- PC: PRIVACY SECTION -->
+    <div class="pc-section-panel" id="pcSec-privacy">
+      <div class="pc-section-titlebar">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.8" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Privacy Notice <span>Info</span>
+        </h4>
+      </div>
+      <div class="pc-content-body" id="pcPrivacyBody">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- PC: ABOUT SECTION -->
+    <div class="pc-section-panel" id="pcSec-about">
+      <div class="pc-section-titlebar">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          About <span>Info</span>
+        </h4>
+      </div>
+      <div class="pc-content-body" id="pcAboutBody">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- PC: SUPPORT SECTION -->
+    <div class="pc-section-panel" id="pcSec-support">
+      <div class="pc-section-titlebar">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Support <span>Info</span>
+        </h4>
+      </div>
+      <div class="pc-content-body" id="pcSupportBody">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+    <div class="pc-section-panel" id="pcSec-dangerzone">
+      <div class="pc-section-titlebar">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="1.8" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Danger <span>Zone</span>
+        </h4>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;padding:4px 0 8px">
+        <div style="font-size:11px;color:var(--txt3);line-height:1.5;padding:10px 14px;background:rgba(248,113,113,0.05);border:1px solid rgba(248,113,113,0.18);border-radius:10px">
+          ⚠️ These actions are <strong style="color:#f87171">permanent</strong> and cannot be undone. All data will be erased from this device.
+        </div>
+        <!-- Clear All Notes -->
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;background:var(--entry-bg);border:1px solid var(--entry-border);border-radius:10px">
+          <div>
+            <div style="font-size:12.5px;font-weight:600;color:var(--txt)">Clear All Notes</div>
+            <div style="font-size:10.5px;color:var(--txt3);margin-top:3px">Permanently delete every note and its content</div>
+          </div>
+          <button onclick="folioClearAllNotes()" style="flex-shrink:0;padding:8px 16px;font-size:11px;font-weight:700;font-family:'Inter',sans-serif;letter-spacing:0.04em;color:#f87171;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.30);border-radius:8px;cursor:pointer;transition:all .18s ease;white-space:nowrap"
+            onmouseover="this.style.background='rgba(248,113,113,0.18)';this.style.borderColor='rgba(248,113,113,0.55)'"
+            onmouseout="this.style.background='rgba(248,113,113,0.08)';this.style.borderColor='rgba(248,113,113,0.30)'">
+            🗑 Clear Notes
+          </button>
+        </div>
+        <!-- Clear All Tasks -->
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;background:var(--entry-bg);border:1px solid var(--entry-border);border-radius:10px">
+          <div>
+            <div style="font-size:12.5px;font-weight:600;color:var(--txt)">Clear All Tasks</div>
+            <div style="font-size:10.5px;color:var(--txt3);margin-top:3px">Permanently delete every task, including completed ones</div>
+          </div>
+          <button onclick="folioClearAllTasks()" style="flex-shrink:0;padding:8px 16px;font-size:11px;font-weight:700;font-family:'Inter',sans-serif;letter-spacing:0.04em;color:#f87171;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.30);border-radius:8px;cursor:pointer;transition:all .18s ease;white-space:nowrap"
+            onmouseover="this.style.background='rgba(248,113,113,0.18)';this.style.borderColor='rgba(248,113,113,0.55)'"
+            onmouseout="this.style.background='rgba(248,113,113,0.08)';this.style.borderColor='rgba(248,113,113,0.30)'">
+            🗑 Clear Tasks
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="setting-group">
+
+      <!-- ══ THEMES CATEGORY HEADER ══ -->
+      <div class="settings-cat-header" data-mscat="themes">
+        <div class="scat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M7 17a5 5 0 010-10M17 17a5 5 0 000-10"/></svg>
+          Themes
+        </div>
+        <div class="scat-line"></div>
+      </div>
+
+      <div class="theme-accordion-head" data-mscat="themes" onclick="toggleSettingsThemeAccordion()">
+        <div class="theme-accordion-label">
+          <div class="ms-acc-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M7 17a5 5 0 010-10M17 17a5 5 0 000-10"/></svg></div>
+          <div class="ms-acc-text"><div class="ms-acc-title">Theme</div><div class="ms-acc-desc">Visual appearance</div></div>
+        </div>
+        <svg id="themeAccordionIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="settings-note">Click to expand and choose a theme</div>
+      <div class="theme-accordion-content" id="settingsThemeContent">
+        <div class="theme-opt" data-theme="blanc" onclick="setTheme('blanc',this)"><div class="t-swatch" style="background:linear-gradient(135deg,#f0f2f7,#2563eb)"></div><div class="t-info"><div class="t-name">White</div></div></div>
+        <div class="theme-opt" data-theme="obsidian" onclick="setTheme('obsidian',this)"><div class="t-swatch" style="background:linear-gradient(135deg,#000,#9ca3af)"></div><div class="t-info"><div class="t-name">Black</div></div></div>
+        <div class="theme-opt" data-theme="void" onclick="setTheme('void',this)"><div class="t-swatch" style="background:linear-gradient(135deg,#030305,#9b7ff4)"></div><div class="t-info"><div class="t-name">Purple</div></div></div>
+        <div class="theme-opt" data-theme="aerium" onclick="setTheme('aerium',this)"><div class="t-swatch" style="background:linear-gradient(135deg,#080c10,#7eb8f7)"></div><div class="t-info"><div class="t-name">Blue</div></div></div>
+        <div class="theme-opt" data-theme="jewel" onclick="setTheme('jewel',this)"><div class="t-swatch" style="background:linear-gradient(135deg,#120808,#c97a00)"></div><div class="t-info"><div class="t-name">Gold</div></div></div>
+      </div>
+
+      <!-- ══ TIME & TIMEZONE CATEGORY HEADER ══ -->
+      <div class="settings-cat-header" style="margin-top:6px">
+        <div class="scat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Time Zone
+        </div>
+        <div class="scat-line"></div>
+      </div>
+
+      <div class="theme-accordion-head" data-mscat="time" onclick="toggleSettingsInfoAccordion('time')">
+        <div class="theme-accordion-label">
+          <div class="ms-acc-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div class="ms-acc-text"><div class="ms-acc-title">Time &amp; Timezone</div><div class="ms-acc-desc">Clock format &amp; region</div></div>
+        </div>
+        <svg id="timeAccordionIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="theme-accordion-content settings-info-content" id="settingsTimeContent">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="border:1px solid var(--gb);border-radius:8px;padding:12px;background:var(--entry-bg)">
+            <div style="font-size:10px;color:var(--txt3);margin-bottom:6px;font-weight:600">Current Timezone</div>
+            <div id="displayTimeZone" style="font-size:14px;font-weight:600;color:var(--txt)">Detecting...</div>
+            <div style="font-size:9px;color:var(--txt3);margin-top:4px" id="currentTime">--:-- --</div>
+          </div>
+          <label class="time-settings-label">
+            <input type="checkbox" id="autoDetectTz" style="cursor:pointer" onchange="toggleAutoDetect()"/>
+            <span>Auto-detect timezone</span>
+          </label>
+          <label class="time-settings-label">
+            <input type="checkbox" id="format24h" style="cursor:pointer" onchange="toggleTimeFormat()"/>
+            <span>24-hour format</span>
+          </label>
+          <label class="time-settings-label">
+            <input type="checkbox" id="showSeconds" style="cursor:pointer" onchange="toggleShowSeconds()"/>
+            <span>Show seconds</span>
+          </label>
+          <label class="time-settings-label">
+            <input type="checkbox" id="showCountryName" style="cursor:pointer" onchange="toggleShowCountryName()"/>
+            <span>Show country name</span>
+          </label>
+          <label class="time-settings-label">
+            <input type="checkbox" id="showTimezoneName" style="cursor:pointer" onchange="toggleShowTimezoneName()"/>
+            <span>Show timezone place name</span>
+          </label>
+        </div>
+      </div>
+      <!-- ══ CUSTOMIZE CATEGORY HEADER ══ -->
+      <div class="settings-cat-header" style="margin-top:6px">
+        <div class="scat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          Customize
+        </div>
+        <div class="scat-line"></div>
+      </div>
+
+      <!-- ══ NOTE STYLE ══ -->
+      <div class="theme-accordion-head" data-mscat="customize" onclick="toggleSettingsInfoAccordion('notestyle')">
+        <div class="theme-accordion-label">
+          <div class="ms-acc-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg></div>
+          <div class="ms-acc-text"><div class="ms-acc-title">Note Style</div><div class="ms-acc-desc">Layout &amp; page mode</div></div>
+        </div>
+        <svg id="notestyleAccordionIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="theme-accordion-content" id="settingsNotestyleContent">
+        <!-- Page Mode: Split vs Infinite -->
+        <div style="margin-bottom:14px">
+          <div style="font-size:9.5px;font-weight:700;color:var(--txt3);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:10px">Page Mode</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div class="ns-option" id="nsSplit" onclick="setNoteStyle('pageMode','split')" data-active="true">
+              <div class="ns-preview">
+                <div class="ns-page">
+                  <div class="ns-line" style="width:80%"></div>
+                  <div class="ns-line" style="width:60%"></div>
+                  <div class="ns-line" style="width:70%"></div>
+                  <div class="ns-divider"></div>
+                  <div class="ns-line" style="width:55%"></div>
+                </div>
+              </div>
+              <div class="ns-label">Split Pages</div>
+              <div class="ns-radio" id="nsSplitRadio"><div class="ns-radio-dot"></div></div>
+            </div>
+            <div class="ns-option" id="nsInfinite" onclick="setNoteStyle('pageMode','infinite')">
+              <div class="ns-preview">
+                <div class="ns-page" style="border:none;background:transparent">
+                  <div class="ns-line" style="width:85%"></div>
+                  <div class="ns-line" style="width:65%"></div>
+                  <div class="ns-line" style="width:75%"></div>
+                  <div class="ns-line" style="width:50%"></div>
+                  <div class="ns-line" style="width:70%"></div>
+                  <div class="ns-line" style="width:60%"></div>
+                </div>
+              </div>
+              <div class="ns-label">Infinite Scroll</div>
+              <div class="ns-radio" id="nsInfiniteRadio"></div>
+            </div>
+          </div>
+        </div>
+        <!-- Layout -->
+        <div style="margin-bottom:14px">
+          <div style="font-size:9.5px;font-weight:700;color:var(--txt3);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:10px">Layout</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div class="ns-layout-opt" id="nsLayoutNormal" onclick="setNoteStyle('layout','normal')" data-active="true">
+              <div class="ns-layout-radio" id="nsLayoutNormalRadio"><div class="ns-radio-dot"></div></div>
+              <div style="flex:1">
+                <div style="font-size:12px;font-weight:600;color:var(--txt)">Normal</div>
+                <div style="font-size:10px;color:var(--txt3)">A4 portrait</div>
+              </div>
+              <div class="ns-layout-thumb" style="width:18px;height:24px;border:1.5px solid var(--g);border-radius:3px;background:var(--entry-bg)"></div>
+            </div>
+            <div class="ns-layout-opt" id="nsLayoutLandscape" onclick="setNoteStyle('layout','landscape')">
+              <div class="ns-layout-radio" id="nsLayoutLandscapeRadio"></div>
+              <div style="flex:1">
+                <div style="font-size:12px;font-weight:600;color:var(--txt)">Landscape</div>
+                <div style="font-size:10px;color:var(--txt3)">A4 landscape</div>
+              </div>
+              <div class="ns-layout-thumb" style="width:28px;height:18px;border:1.5px solid var(--txt3);border-radius:3px;background:var(--entry-bg)"></div>
+            </div>
+            <div class="ns-layout-opt" id="nsLayoutLong" onclick="setNoteStyle('layout','long')">
+              <div class="ns-layout-radio" id="nsLayoutLongRadio"></div>
+              <div style="flex:1">
+                <div style="font-size:12px;font-weight:600;color:var(--txt)">Long (1:2)</div>
+                <div style="font-size:10px;color:var(--txt3)">Tall scroll area</div>
+              </div>
+              <div class="ns-layout-thumb" style="width:14px;height:28px;border:1.5px solid var(--txt3);border-radius:3px;background:var(--entry-bg)"></div>
+            </div>
+          </div>
+        </div>
+        <!-- Scroll Direction -->
+        <div>
+          <div style="font-size:9.5px;font-weight:700;color:var(--txt3);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:10px">Scroll Direction</div>
+          <div style="display:flex;gap:8px">
+            <div class="ns-scroll-opt" id="nsScrollVertical" onclick="setNoteStyle('scroll','vertical')" data-active="true">
+              <div class="ns-scroll-radio" id="nsScrollVerticalRadio"><div class="ns-radio-dot"></div></div>
+              <svg width="18" height="22" viewBox="0 0 18 22" fill="none"><rect x="1" y="1" width="16" height="20" rx="2" stroke="var(--g)" stroke-width="1.5" fill="var(--entry-bg)"/><rect x="7" y="5" width="4" height="12" rx="2" fill="var(--g)" opacity="0.6"/></svg>
+              <div style="font-size:11px;color:var(--txt2)">Vertical</div>
+            </div>
+            <div class="ns-scroll-opt" id="nsScrollHorizontal" onclick="setNoteStyle('scroll','horizontal')">
+              <div class="ns-scroll-radio" id="nsScrollHorizontalRadio"></div>
+              <svg width="22" height="18" viewBox="0 0 22 18" fill="none"><rect x="1" y="1" width="20" height="16" rx="2" stroke="var(--txt3)" stroke-width="1.5" fill="var(--entry-bg)"/><rect x="5" y="7" width="12" height="4" rx="2" fill="var(--txt3)" opacity="0.5"/></svg>
+              <div style="font-size:11px;color:var(--txt3)">Horizontal</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ EDITOR PREFERENCES ══ -->
+      <div class="theme-accordion-head" data-mscat="customize" onclick="toggleSettingsInfoAccordion('editorprefs')">
+        <div class="theme-accordion-label">
+          <div class="ms-acc-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+          <div class="ms-acc-text"><div class="ms-acc-title">Editor Preferences</div><div class="ms-acc-desc">Font, glow &amp; focus</div></div>
+        </div>
+        <svg id="editorprefsAccordionIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="theme-accordion-content" id="settingsEditorprefsContent">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <!-- Font size -->
+          <div>
+            <div style="font-size:9.5px;font-weight:700;color:var(--txt3);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px">Editor Font Size</div>
+            <div style="display:flex;gap:6px">
+              <button class="ep-size-btn" id="epSizeSm" onclick="setEditorFontSize('small')">Small</button>
+              <button class="ep-size-btn ep-active" id="epSizeMd" onclick="setEditorFontSize('medium')">Medium</button>
+              <button class="ep-size-btn" id="epSizeLg" onclick="setEditorFontSize('large')">Large</button>
+              <button class="ep-size-btn" id="epSizeXl" onclick="setEditorFontSize('xlarge')">XL</button>
+            </div>
+          </div>
+          <!-- Line height -->
+          <div>
+            <div style="font-size:9.5px;font-weight:700;color:var(--txt3);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px">Line Height</div>
+            <div style="display:flex;gap:6px">
+              <button class="ep-size-btn" id="epLhSnug" onclick="setLineHeight('snug')">Snug</button>
+              <button class="ep-size-btn ep-active" id="epLhNormal" onclick="setLineHeight('normal')">Normal</button>
+              <button class="ep-size-btn" id="epLhRelaxed" onclick="setLineHeight('relaxed')">Relaxed</button>
+            </div>
+          </div>
+          <!-- Toggles -->
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <label class="time-settings-label">
+              <input type="checkbox" id="epTextGlow" onchange="toggleEditorPref('textGlow')" checked/>
+              <span>✦ Text glow on typing</span>
+            </label>
+            <label class="time-settings-label">
+              <input type="checkbox" id="epFocusGlow" onchange="toggleEditorPref('focusGlow')" checked/>
+              <span>✦ Text glow on typing (focus mode)</span>
+            </label>
+            <label class="time-settings-label">
+              <input type="checkbox" id="epSpellCheck" onchange="toggleEditorPref('spellCheck')" checked/>
+              <span>Spell check</span>
+            </label>
+            <label class="time-settings-label">
+              <input type="checkbox" id="epAutoFocus" onchange="toggleEditorPref('autoFocus')"/>
+              <span>Auto-enter focus mode on open</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ SESSION TIMER ══ -->
+      <div class="theme-accordion-head" data-mscat="customize" onclick="toggleSettingsInfoAccordion('rtlsession')">
+        <div class="theme-accordion-label">
+          <div class="ms-acc-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 3h14M6 3v5l-2 3 2 3v5h12v-5l2-3-2-3V3"/><line x1="12" y1="9" x2="12" y2="15"/></svg></div>
+          <div class="ms-acc-text"><div class="ms-acc-title">Session Timer</div><div class="ms-acc-desc">Set a focus time limit</div></div>
+        </div>
+        <svg id="rtlsessionAccordionIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="theme-accordion-content" id="settingsRtlsessionContent">
+        <div style="display:flex;flex-direction:column;gap:4px">
+
+          <!-- Enable toggle -->
+          <div class="rtl-set-row">
+            <div class="rtl-set-lbl">
+              Enable Session Timer
+              <small>Shows a live countdown while you write or read</small>
+            </div>
+            <div class="rtl-set-toggle" id="rtlEnableToggle" onclick="rtlTogglePref('enabled')"></div>
+          </div>
+
+          <!-- Auto-start toggle -->
+          <div class="rtl-set-row" id="rtlAutoStartRow">
+            <div class="rtl-set-lbl">
+              Auto-start on note open
+              <small>Timer begins automatically; off = tap toolbar button to start</small>
+            </div>
+            <div class="rtl-set-toggle" id="rtlAutoStartToggle" onclick="rtlTogglePref('autoStart')"></div>
+          </div>
+
+          <!-- Warn toggle -->
+          <div class="rtl-set-row" id="rtlWarnRow">
+            <div class="rtl-set-lbl">
+              Warn at 5 min remaining
+              <small>Timer bar turns amber when time is almost up</small>
+            </div>
+            <div class="rtl-set-toggle" id="rtlWarnToggle" onclick="rtlTogglePref('warn')"></div>
+          </div>
+
+          <!-- Duration picker -->
+          <div class="rtl-duration-row" id="rtlDurationRow">
+            <div class="rtl-duration-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="rtl-duration-wrap">
+              <div class="rtl-duration-val" id="rtlDurLabel">25<small>min</small></div>
+              <input type="range" class="rtl-slider" id="rtlDurSlider" min="1" max="120" value="25" oninput="rtlSliderChange(this.value)"/>
+              <div class="rtl-presets">
+                <button class="rtl-preset-btn" data-minutes="5" onclick="rtlSetPreset(5)">5m</button>
+                <button class="rtl-preset-btn" data-minutes="10" onclick="rtlSetPreset(10)">10m</button>
+                <button class="rtl-preset-btn rtl-active" data-minutes="25" onclick="rtlSetPreset(25)">25m</button>
+                <button class="rtl-preset-btn" data-minutes="45" onclick="rtlSetPreset(45)">45m</button>
+                <button class="rtl-preset-btn" data-minutes="60" onclick="rtlSetPreset(60)">1h</button>
+                <button class="rtl-preset-btn" data-minutes="90" onclick="rtlSetPreset(90)">90m</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Manual start button (shown when autoStart is off) -->
+          <div id="rtlManualStartWrap" style="display:none;margin-top:4px">
+            <button onclick="rtlManualStart()" style="width:100%;padding:10px;border:1px solid var(--btn-border);background:var(--btn-bg);color:var(--g);border-radius:10px;font-size:12px;font-weight:700;letter-spacing:.06em;cursor:pointer;transition:all .18s ease;font-family:'Inter',sans-serif">
+              ▶ Start Session Now
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ══ CUSTOMIZE TOOLBAR ══ -->
+      <div class="theme-accordion-head" data-mscat="customize" onclick="toggleSettingsInfoAccordion('toolbar')">
+        <div class="theme-accordion-label">
+          <div class="ms-acc-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+          <div class="ms-acc-text"><div class="ms-acc-title">Customize Toolbar</div><div class="ms-acc-desc">Toggle editor tools</div></div>
+        </div>
+        <svg id="toolbarAccordionIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="theme-accordion-content" id="settingsToolbarContent">
+        <!-- Character Counter pinned at top -->
+        <div class="tc-item" id="tcCharCounterRow">
+          <div class="tc-item-icon" style="color:var(--g)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 7h16M4 12h10M4 17h6"/><circle cx="19" cy="17" r="3"/></svg></div>
+          <div class="tc-item-label" style="color:var(--txt)">Character Counter</div>
+          <div class="tc-item-toggle on" id="tcCharCounterToggle" onclick="toggleSpecialTool('charcounter','tcCharCounterToggle')"></div>
+        </div>
+        <div class="tc-item" style="margin-top:6px" id="tcWordCountRow">
+          <div class="tc-item-icon" style="color:var(--g)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 7h16M4 12h10M4 17h6"/></svg></div>
+          <div class="tc-item-label" style="color:var(--txt)">Word Count Button</div>
+          <div class="tc-item-toggle on" id="tcWordCountToggle" onclick="toggleSpecialTool('wordcount','tcWordCountToggle')"></div>
+        </div>
+        <div style="height:1px;background:var(--gb);margin:10px 0;opacity:0.6"></div>
+        <div style="font-size:10.5px;color:var(--txt3);margin-bottom:8px;line-height:1.5">Toggle formatting tools on or off. Changes apply immediately.</div>
+        <div id="toolbarCustomizeList" style="display:flex;flex-direction:column;gap:6px"></div>
+        <button onclick="resetToolbarSettings()" style="margin-top:12px;padding:8px 14px;border:1px solid var(--btn-border);background:var(--btn-bg);color:var(--txt3);border-radius:8px;font-size:11px;font-weight:600;letter-spacing:0.05em;cursor:pointer;width:100%;text-align:center">Reset to Default</button>
+      </div>
+
+      <!-- ══ NAVIGATION BAR ══ -->
+      <div class="theme-accordion-head" data-mscat="customize" onclick="toggleSettingsInfoAccordion('navbar')">
+        <div class="theme-accordion-label">
+          <div class="ms-acc-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="16" width="20" height="6" rx="2"/><line x1="6" y1="19" x2="6" y2="19"/><line x1="12" y1="19" x2="12" y2="19"/><line x1="18" y1="19" x2="18" y2="19"/></svg></div>
+          <div class="ms-acc-text"><div class="ms-acc-title">Navigation Bar</div><div class="ms-acc-desc">Show or hide bottom nav</div></div>
+        </div>
+        <svg id="navbarAccordionIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="theme-accordion-content" id="settingsNavbarContent">
+        <div style="font-size:10.5px;color:var(--txt3);margin-bottom:12px;line-height:1.5">Control visibility of the bottom section-changer bar on mobile. When hidden, you can still navigate via swipe or other gestures.</div>
+        <label class="time-settings-label">
+          <input type="checkbox" id="epShowNavBar" onchange="toggleNavBar(this)"/>
+          <span>Show bottom navigation bar</span>
+        </label>
+      </div>
+
+      <!-- ══ DATA STORAGE CATEGORY HEADER ══ -->
+      <div class="settings-cat-header" style="margin-top:6px">
+        <div class="scat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg>
+          Data Storage
+        </div>
+        <div class="scat-line"></div>
+      </div>
+
+      <!-- ══ DATA STORAGE ══ -->
+      <div class="theme-accordion-head" data-mscat="storage" onclick="toggleSettingsInfoAccordion('datastorage')">
+        <div class="theme-accordion-label">
+          <div class="ms-acc-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg></div>
+          <div class="ms-acc-text"><div class="ms-acc-title">Data Storage</div><div class="ms-acc-desc">Backup &amp; local file sync</div></div>
+        </div>
+        <svg id="datastorageAccordionIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="theme-accordion-content" id="settingsDatastorageContent">
+        <div style="display:flex;flex-direction:column;gap:12px">
+
+          <!-- Current status -->
+          <div style="border:1px solid var(--gb);border-radius:8px;padding:12px;background:var(--entry-bg)">
+            <div style="font-size:9.5px;font-weight:700;color:var(--txt3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:6px">Current Save Mode</div>
+            <div id="fileStatusText" style="font-size:12.5px;font-weight:600;color:var(--txt3);line-height:1.4">Not linked — data stored in browser only</div>
+            <div id="fileSaveIndicator" style="font-size:10px;margin-top:4px;opacity:0;transition:opacity 0.3s ease;color:var(--g)"></div>
+          </div>
+
+          <!-- File System API section -->
+          <div id="fileApiSection">
+            <div style="font-size:10px;color:var(--txt3);line-height:1.6;margin-bottom:10px">
+              <strong style="color:var(--txt)">Permanent Local File</strong> — Link a <code style="background:var(--entry-bg);padding:1px 5px;border-radius:4px;font-size:9.5px">.json</code> file on your device. Every change auto-saves to it. Even if you clear browser data, your file stays safe.
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button onclick="linkSaveFile()" id="btnLinkFile" style="flex:1;min-width:110px;padding:9px 12px;background:var(--btn-bg);border:1px solid var(--btn-border);color:var(--g);border-radius:8px;font-size:11px;font-weight:700;letter-spacing:0.05em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.18s ease">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+                New Save File
+              </button>
+              <button onclick="openSaveFile()" style="flex:1;min-width:110px;padding:9px 12px;background:var(--btn-bg);border:1px solid var(--btn-border);color:var(--txt2);border-radius:8px;font-size:11px;font-weight:700;letter-spacing:0.05em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.18s ease">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+                Open Existing
+              </button>
+              <button onclick="unlinkSaveFile()" id="fileUnlinkBtn" style="display:none;padding:9px 12px;background:rgba(248,81,73,0.07);border:1px solid rgba(248,81,73,0.25);color:var(--rd);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.18s ease">Unlink</button>
+            </div>
+            <div id="noBrowserSupportNote" style="display:none;font-size:10px;color:var(--am);margin-top:8px;line-height:1.5;padding:7px 10px;background:rgba(240,193,51,0.06);border:1px solid rgba(240,193,51,0.2);border-radius:6px">
+              ⚠ Your browser doesn't support the File System API. Use Export/Import below instead.
+            </div>
+          </div>
+
+          <div style="height:1px;background:var(--gb);margin:2px 0"></div>
+
+          <!-- Export / Import -->
+          <div>
+            <div style="font-size:9.5px;font-weight:700;color:var(--txt3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:8px">Backup & Restore</div>
+            <div style="font-size:10px;color:var(--txt3);line-height:1.5;margin-bottom:10px">Works on all browsers. Export saves everything to a <code style="background:var(--entry-bg);padding:1px 5px;border-radius:4px;font-size:9.5px">.json</code> file you keep. Import restores from one.</div>
+            <div style="display:flex;gap:8px">
+              <button onclick="exportJSON()" style="flex:1;padding:9px 12px;background:var(--btn-bg);border:1px solid var(--btn-border);color:var(--txt2);border-radius:8px;font-size:11px;font-weight:700;letter-spacing:0.05em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.18s ease">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export Backup
+              </button>
+              <button onclick="importJSON()" style="flex:1;padding:9px 12px;background:var(--btn-bg);border:1px solid var(--btn-border);color:var(--txt2);border-radius:8px;font-size:11px;font-weight:700;letter-spacing:0.05em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.18s ease">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Import Backup
+              </button>
+            </div>
+          </div>
+
+          <!-- Auto-backup reminder -->
+          <div style="display:flex;align-items:flex-start;gap:8px;padding:9px 10px;background:var(--entry-bg);border:1px solid var(--entry-border);border-radius:8px">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span style="font-size:10px;color:var(--txt3);line-height:1.6">Linking a local file is the safest option — your data lives on your device, not the browser. Export backups are a good habit regardless.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ SUPPORT CATEGORY HEADER ══ -->
+      <div class="settings-cat-header" style="margin-top:6px">
+        <div class="scat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Support
+        </div>
+        <div class="scat-line"></div>
+      </div>
+
+      <!-- ══ REPORT BUG ROW ══ -->
+      <div class="settings-row-bug" onclick="openBugModal()">
+        <div class="srb-left">
+          <div class="srb-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f85149" stroke-width="2.2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div>
+            <div class="srb-label">Report a Bug</div>
+            <div class="srb-sub">Found an issue? Let us know</div>
+          </div>
+        </div>
+        <svg class="srb-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+
+      <!-- ══ PRIVACY POLICY CATEGORY HEADER ══ -->
+      <div class="settings-cat-header" style="margin-top:6px">
+        <div class="scat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Privacy Policy
+        </div>
+        <div class="scat-line"></div>
+      </div>
+
+      <!-- ══ PRIVACY NOTICE ══ -->
+      <div class="theme-accordion-head" data-mscat="privacy" onclick="toggleSettingsInfoAccordion('privacy')">
+        <div class="theme-accordion-label">
+          <div class="ms-acc-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <div class="ms-acc-text"><div class="ms-acc-title">Privacy Notice</div><div class="ms-acc-desc">100% local, zero tracking</div></div>
+        </div>
+        <svg id="privacyAccordionIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="theme-accordion-content settings-info-content" id="settingsPrivacyContent">
+        <div style="display:flex;flex-direction:column;gap:11px">
+          <div style="display:flex;align-items:center;gap:8px;padding-bottom:10px;border-bottom:1px solid var(--gb)">
+            <span style="font-size:15px">🛡️</span>
+            <span style="font-size:12px;font-weight:700;color:var(--txt);letter-spacing:0.02em">Your data stays on your device</span>
+          </div>
+          <p style="font-size:11.5px;color:var(--txt2);line-height:1.7">Everything you create in <strong style="color:var(--txt)">FOLIO</strong> is stored locally on your device — never on a server. We designed a <strong style="color:var(--txt)">3-layer storage system</strong> so you always stay in control. Your notes and tasks are never transmitted, uploaded, or shared with any third party.</p>
+
+          <!-- 3-layer storage visual -->
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="font-size:9.5px;font-weight:700;color:var(--txt3);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:2px">How Your Data Is Saved</div>
+            <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 10px;background:var(--entry-hover);border:1px solid var(--entry-border);border-left:3px solid var(--g);border-radius:8px">
+              <span style="font-size:14px;flex-shrink:0">💾</span>
+              <div>
+                <div style="font-size:11.5px;font-weight:700;color:var(--txt)">Layer 1 — Local File <span style="font-size:9.5px;font-weight:600;color:var(--g);background:var(--btn-bg);border:1px solid var(--btn-border);border-radius:4px;padding:1px 6px;margin-left:4px">Best</span></div>
+                <div style="font-size:10.5px;color:var(--txt2);line-height:1.6;margin-top:3px">Link a <code style="background:var(--entry-bg);padding:1px 5px;border-radius:4px;font-size:9.5px">.json</code> file on your device via Settings → Data Storage. Every change auto-saves within 1 second. Safe even if you clear all browser data. Available on Chrome &amp; Edge.</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 10px;background:var(--entry-bg);border:1px solid var(--entry-border);border-radius:8px">
+              <span style="font-size:14px;flex-shrink:0">📦</span>
+              <div>
+                <div style="font-size:11.5px;font-weight:700;color:var(--txt)">Layer 2 — Export / Import Backup</div>
+                <div style="font-size:10.5px;color:var(--txt2);line-height:1.6;margin-top:3px">Works on all browsers. Export a <code style="background:var(--entry-bg);padding:1px 5px;border-radius:4px;font-size:9.5px">folio_backup.json</code> anytime and restore it later. A confirmation shows your note &amp; task count before anything is overwritten.</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 10px;background:var(--entry-bg);border:1px solid var(--entry-border);border-radius:8px">
+              <span style="font-size:14px;flex-shrink:0">⚡</span>
+              <div>
+                <div style="font-size:11.5px;font-weight:700;color:var(--txt)">Layer 3 — Browser Cache</div>
+                <div style="font-size:10.5px;color:var(--txt2);line-height:1.6;margin-top:3px">localStorage is always active as the instant working cache so the app stays fast. Used automatically — no setup needed.</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;align-items:flex-start;gap:9px">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg>
+              <span style="font-size:11.5px;color:var(--txt2);line-height:1.6"><strong style="color:var(--txt)">No account needed</strong> — Start immediately without an email or password.</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:9px">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg>
+              <span style="font-size:11.5px;color:var(--txt2);line-height:1.6"><strong style="color:var(--txt)">No analytics</strong> — We don't track your usage, clicks, or behaviour.</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:9px">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg>
+              <span style="font-size:11.5px;color:var(--txt2);line-height:1.6"><strong style="color:var(--txt)">No cookies</strong> — We use local storage only, zero tracking scripts.</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:9px">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:2px"><polyline points="20 6 9 17 4 12"/></svg>
+              <span style="font-size:11.5px;color:var(--txt2);line-height:1.6"><strong style="color:var(--txt)">Works offline</strong> — Full functionality without an internet connection.</span>
+            </div>
+          </div>
+
+          <!-- External connections disclosure -->
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="font-size:9.5px;font-weight:700;color:var(--txt3);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:2px">Offline Connections</div>
+            <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 10px;background:var(--entry-bg);border:1px solid var(--entry-border);border-radius:8px">
+              <span style="font-size:14px;flex-shrink:0">🔤</span>
+              <div>
+                <div style="font-size:11.5px;font-weight:700;color:var(--txt)">Offline Fonts</div>
+                <div style="font-size:10.5px;color:var(--txt2);line-height:1.6;margin-top:3px">Typefaces use polished local system font stacks. No font request is made, and no notes or tasks ever leave this device.</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 10px;background:var(--entry-bg);border:1px solid var(--entry-border);border-radius:8px">
+              <span style="font-size:14px;flex-shrink:0">📧</span>
+              <div>
+                <div style="font-size:11.5px;font-weight:700;color:var(--txt)">Bug Reports <span style="font-size:9.5px;font-weight:600;color:var(--txt3);background:var(--btn-bg);border:1px solid var(--btn-border);border-radius:4px;padding:1px 6px;margin-left:4px">EmailJS</span></div>
+                <div style="font-size:10.5px;color:var(--txt2);line-height:1.6;margin-top:3px">Sends through EmailJS when credentials and internet are available. With placeholder keys, the form stays local and shows setup guidance.</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:rgba(248,81,73,0.07);border:1px solid rgba(248,81,73,0.28);border-left:3px solid rgba(248,81,73,0.7);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;align-items:center;gap:6px">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--rd)" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <span style="font-size:10.5px;font-weight:700;color:var(--rd);letter-spacing:0.04em;text-transform:uppercase">Caution — Browser Cache</span>
+            </div>
+            <p style="font-size:11px;color:var(--txt2);line-height:1.65">If you are using <strong style="color:var(--txt)">Layer 3 only</strong> (no linked file), clearing <strong style="color:var(--txt)">"Website Data"</strong> or <strong style="color:var(--txt)">"Browser Cache"</strong> will delete your notes and tasks. Linking a local file (Layer 1) or regularly exporting a backup (Layer 2) fully protects your data from this risk.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ABOUT CATEGORY HEADER ══ -->
+      <div class="settings-cat-header" style="margin-top:6px">
+        <div class="scat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          About
+        </div>
+        <div class="scat-line"></div>
+      </div>
+
+      <!-- ══ ABOUT ══ -->
+      <div class="theme-accordion-head" data-mscat="about" onclick="toggleSettingsInfoAccordion('about')">
+        <div class="theme-accordion-label">
+          <div class="ms-acc-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+          <div class="ms-acc-text"><div class="ms-acc-title">About FOLIO</div><div class="ms-acc-desc">Version, features &amp; credits</div></div>
+        </div>
+        <svg id="aboutAccordionIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="theme-accordion-content settings-info-content" id="settingsAboutContent">
+        <div style="display:flex;flex-direction:column;gap:12px">
+
+          <!-- Brand header -->
+          <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;border-bottom:1px solid var(--gb)">
+            <div>
+              <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:var(--txt);letter-spacing:0.01em;line-height:1.2">FOL<span style="font-style:italic;color:var(--g)">IO</span></div>
+              <div style="font-size:9.5px;color:var(--txt3);letter-spacing:0.1em;text-transform:uppercase;margin-top:3px">Notes &amp; Tasks Workspace</div>
+            </div>
+            <div style="font-size:10px;font-weight:700;color:var(--g);background:var(--btn-bg);border:1px solid var(--btn-border);border-radius:6px;padding:4px 9px;letter-spacing:0.06em;white-space:nowrap">V1.0</div>
+          </div>
+
+          <!-- Tagline -->
+          <p style="font-size:11.5px;color:var(--g);font-style:italic;font-family:'Lora',serif;line-height:1.6;text-align:center;padding:2px 0">Empowering personal productivity through total privacy and minimalist design.</p>
+
+          <!-- Features grid -->
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="font-size:9.5px;font-weight:700;color:var(--txt3);letter-spacing:0.12em;text-transform:uppercase">Core Features</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">
+              <div style="font-size:11px;color:var(--txt2);background:var(--entry-bg);border:1px solid var(--entry-border);border-radius:6px;padding:6px 8px;display:flex;align-items:center;gap:6px;line-height:1.3"><span style="font-size:13px">✍️</span><span><strong style="color:var(--txt)">Rich text</strong> notes</span></div>
+              <div style="font-size:11px;color:var(--txt2);background:var(--entry-bg);border:1px solid var(--entry-border);border-radius:6px;padding:6px 8px;display:flex;align-items:center;gap:6px;line-height:1.3"><span style="font-size:13px">📋</span><span><strong style="color:var(--txt)">Task</strong> management</span></div>
+              <div style="font-size:11px;color:var(--txt2);background:var(--entry-bg);border:1px solid var(--entry-border);border-radius:6px;padding:6px 8px;display:flex;align-items:center;gap:6px;line-height:1.3"><span style="font-size:13px">🏗️</span><span><strong style="color:var(--txt)">Kanban</strong> board</span></div>
+              <div style="font-size:11px;color:var(--txt2);background:var(--entry-bg);border:1px solid var(--entry-border);border-radius:6px;padding:6px 8px;display:flex;align-items:center;gap:6px;line-height:1.3"><span style="font-size:13px">🎨</span><span><strong style="color:var(--txt)">5 colour</strong> themes</span></div>
+              <div style="font-size:11px;color:var(--txt2);background:var(--entry-bg);border:1px solid var(--entry-border);border-radius:6px;padding:6px 8px;display:flex;align-items:center;gap:6px;line-height:1.3"><span style="font-size:13px">🌍</span><span><strong style="color:var(--txt)">Live world</strong> clock</span></div>
+              <div style="font-size:11px;color:var(--txt2);background:var(--entry-bg);border:1px solid var(--entry-border);border-radius:6px;padding:6px 8px;display:flex;align-items:center;gap:6px;line-height:1.3"><span style="font-size:13px">📲</span><span><strong style="color:var(--txt)">Offline</strong> PWA</span></div>
+              <div style="font-size:11px;color:var(--txt2);background:var(--entry-bg);border:1px solid var(--entry-border);border-radius:6px;padding:6px 8px;display:flex;align-items:center;gap:6px;line-height:1.3"><span style="font-size:13px">📅</span><span><strong style="color:var(--txt)">Priority</strong> &amp; due dates</span></div>
+              <div style="font-size:11px;color:var(--txt2);background:var(--entry-bg);border:1px solid var(--entry-border);border-radius:6px;padding:6px 8px;display:flex;align-items:center;gap:6px;line-height:1.3"><span style="font-size:13px">📱</span><span><strong style="color:var(--txt)">Mobile-first</strong> design</span></div>
+            </div>
+          </div>
+
+          <!-- New: 3-layer storage highlight -->
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <div style="font-size:9.5px;font-weight:700;color:var(--txt3);letter-spacing:0.12em;text-transform:uppercase">What's New in V1.0</div>
+            <div style="display:flex;align-items:flex-start;gap:8px;padding:9px 11px;background:var(--entry-hover);border:1px solid var(--entry-border);border-left:3px solid var(--g);border-radius:8px">
+              <span style="font-size:14px;flex-shrink:0">🔒</span>
+              <div>
+                <div style="font-size:11.5px;font-weight:700;color:var(--txt)">3-Layer Permanent Storage</div>
+                <div style="font-size:10.5px;color:var(--txt2);line-height:1.6;margin-top:2px">Auto-save to a local file on your device (Chrome/Edge), Export/Import backup for all browsers, and localStorage as fast cache. Your data now survives even if you wipe the browser entirely.</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:8px;padding:9px 11px;background:var(--entry-bg);border:1px solid var(--entry-border);border-radius:8px">
+              <span style="font-size:14px;flex-shrink:0">⚙️</span>
+              <div>
+                <div style="font-size:11.5px;font-weight:700;color:var(--txt)">Redesigned Settings Panel</div>
+                <div style="font-size:10.5px;color:var(--txt2);line-height:1.6;margin-top:2px">Categorised sections for Themes, Time Zone, Customize, Data Storage, Privacy &amp; About — works beautifully on both mobile and desktop.</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:8px;padding:9px 11px;background:var(--entry-bg);border:1px solid var(--entry-border);border-radius:8px">
+              <span style="font-size:14px;flex-shrink:0">📲</span>
+              <div>
+                <div style="font-size:11.5px;font-weight:700;color:var(--txt)">Cross-Platform PWA Install</div>
+                <div style="font-size:10.5px;color:var(--txt2);line-height:1.6;margin-top:2px">Full install support across Android (theme-colour status bar), iOS Safari (Add to Home Screen icon), and desktop browsers (tab favicon) — no gaps on any platform.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div style="display:flex;flex-direction:column;gap:4px;align-items:center;padding-top:6px;border-top:1px solid var(--gb);text-align:center">
+            <span style="font-size:11px;color:var(--txt3);font-style:italic;font-family:'Lora',serif">Focus on what matters, anywhere you are.</span>
+            <span style="font-size:10px;color:var(--txt3);opacity:0.7">© 2026 FOLIO Digital. All rights reserved.</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ══ DANGER ZONE — MOBILE ══ -->
+      <div class="settings-cat-header" style="margin-top:6px">
+        <div class="scat-label" style="color:#f87171">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Danger Zone
+        </div>
+        <div class="scat-line" style="background:rgba(248,113,113,0.22)"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;padding:4px 0 8px">
+        <div style="font-size:11px;color:var(--txt3);line-height:1.5;padding:9px 12px;background:rgba(248,113,113,0.05);border:1px solid rgba(248,113,113,0.16);border-radius:8px">
+          ⚠️ These actions are <strong style="color:#f87171">permanent</strong> and cannot be undone. All data will be erased from this device.
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:var(--entry-bg);border:1px solid var(--entry-border);border-radius:10px">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:var(--txt)">Clear All Notes</div>
+            <div style="font-size:10.5px;color:var(--txt3);margin-top:2px">Permanently delete every note and its content</div>
+          </div>
+          <button onclick="folioClearAllNotes()" style="flex-shrink:0;padding:7px 14px;font-size:11px;font-weight:700;font-family:'Inter',sans-serif;letter-spacing:0.04em;color:#f87171;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.30);border-radius:8px;cursor:pointer;white-space:nowrap">🗑 Clear Notes</button>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:var(--entry-bg);border:1px solid var(--entry-border);border-radius:10px">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:var(--txt)">Clear All Tasks</div>
+            <div style="font-size:10.5px;color:var(--txt3);margin-top:2px">Permanently delete every task, including completed ones</div>
+          </div>
+          <button onclick="folioClearAllTasks()" style="flex-shrink:0;padding:7px 14px;font-size:11px;font-weight:700;font-family:'Inter',sans-serif;letter-spacing:0.04em;color:#f87171;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.30);border-radius:8px;cursor:pointer;white-space:nowrap">🗑 Clear Tasks</button>
+        </div>
+      </div>
+
+    </div><!-- /setting-group -->
+
+  </div><!-- /settings-content -->
+  </div><!-- /pcSettingsDialog -->
+</div><!-- /settingsPanel -->
+
+
+
+<!-- ══════════════════════════════════════════════════════════
+     BUG REPORT MODAL
+═══════════════════════════════════════════════════════════ -->
+<div id="bugReportOverlay" class="bug-modal-overlay" onclick="bugOverlayClick(event)">
+  <div class="bug-modal" id="bugReportModal">
+    <div class="bug-modal-head">
+      <div class="bug-modal-title-wrap">
+        <div class="bug-modal-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f85149" stroke-width="2.2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="bug-modal-title">Report a Bug</div>
+      </div>
+      <button class="bug-modal-close" onclick="closeBugModal()" aria-label="Close">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- Form body -->
+    <div class="bug-modal-body" id="bugFormBody">
+      <div style="border:1px solid rgba(155,127,244,0.28);background:rgba(155,127,244,0.08);border-radius:8px;padding:10px 12px;margin-bottom:14px;color:var(--txt2);font-size:11.5px;line-height:1.55">
+        <strong style="color:var(--txt);font-size:11.5px">EmailJS sending</strong><br/>
+        Reports send online only after EmailJS public key, service ID, and template ID are configured. The page still opens and works offline.
+      </div>
+      <div class="bug-field">
+        <div class="bug-label">Category</div>
+        <select class="bug-select" id="bugCategory">
+          <option value="UI / Display Issue">UI / Display Issue</option>
+          <option value="Feature Not Working">Feature Not Working</option>
+          <option value="Data / Storage Issue">Data / Storage Issue</option>
+          <option value="Performance">Performance</option>
+          <option value="Crash / Freeze">Crash / Freeze</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div class="bug-field">
+        <div class="bug-label">Subject <span style="color:var(--rd)">*</span></div>
+        <input type="text" class="bug-input" id="bugSubject" placeholder="Brief summary of the issue…" maxlength="120"/>
+      </div>
+
+      <div class="bug-field">
+        <div class="bug-label">Description <span style="color:var(--rd)">*</span></div>
+        <textarea class="bug-textarea" id="bugDescription" placeholder="Describe what happened and how to reproduce it. The more detail, the better." maxlength="2000"></textarea>
+      </div>
+
+      <div class="bug-field">
+        <div class="bug-label">Your Email <span style="opacity:0.5">(optional — for follow-up)</span></div>
+        <input type="email" class="bug-input" id="bugEmail" placeholder="you@example.com"/>
+      </div>
+
+      <div class="bug-divider"></div>
+
+      <div>
+        <div class="bug-label" style="margin-bottom:8px">System Info <span style="opacity:0.5">(auto-collected)</span></div>
+        <div class="bug-system-info">
+          <div class="bug-system-row">
+            <span class="bug-system-key">App Version</span>
+            <span class="bug-system-val" id="bugInfoVersion">V1.0</span>
+          </div>
+          <div class="bug-system-row">
+            <span class="bug-system-key">Theme</span>
+            <span class="bug-system-val" id="bugInfoTheme">—</span>
+          </div>
+          <div class="bug-system-row">
+            <span class="bug-system-key">Browser</span>
+            <span class="bug-system-val" id="bugInfoBrowser">—</span>
+          </div>
+          <div class="bug-system-row">
+            <span class="bug-system-key">Platform</span>
+            <span class="bug-system-val" id="bugInfoPlatform">—</span>
+          </div>
+          <div class="bug-system-row">
+            <span class="bug-system-key">Screen</span>
+            <span class="bug-system-val" id="bugInfoScreen">—</span>
+          </div>
+          <div class="bug-system-row">
+            <span class="bug-system-key">Reported At</span>
+            <span class="bug-system-val" id="bugInfoTime">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bug-footer">
+        <button class="bug-cancel" onclick="closeBugModal()">Cancel</button>
+        <button class="bug-send" id="bugSendBtn" onclick="submitBugReport()">
+          <span class="bug-send-spinner"></span>
+          <span class="bug-send-text" style="display:flex;align-items:center;gap:6px">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Send Report
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Success state -->
+    <div class="bug-success-state" id="bugSuccessState">
+      <div class="bug-success-check">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2dd48d" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div>
+        <div class="bug-success-title">Report Sent</div>
+        <p class="bug-success-sub">Your report was sent through EmailJS.</p>
+      </div>
+      <button class="bug-cancel" style="margin-top:4px" onclick="closeBugModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Fix #20: Custom confirm dialog — replaces native confirm() blocked in iframes/PWA -->
+<div id="folioConfirmOverlay" class="folio-confirm-overlay" onclick="if(event.target===this&&typeof _confirmResolve==='function')_confirmResolve(false)">
+  <div class="folio-confirm-box">
+    <div class="folio-confirm-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f85149" stroke-width="2.2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </div>
+    <div class="folio-confirm-msg" id="folioConfirmMsg">Are you sure?</div>
+    <div class="folio-confirm-btns">
+      <button class="folio-confirm-cancel" onclick="_confirmResolve(false)">Cancel</button>
+      <button class="folio-confirm-ok" id="folioConfirmOkBtn" onclick="_confirmResolve(true)">Delete</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
