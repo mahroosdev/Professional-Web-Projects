@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UltraThemeForge — 150 Mockup Preview Engine</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23090915'/><text y='22' x='4' font-size='20'>🎨</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Ambient background -->
+<div class="ambient">
+  <div class="amb amb-1"></div>
+  <div class="amb amb-2"></div>
+  <div class="amb amb-3"></div>
+</div>
+
+<!-- Header -->
+<header>
+  <div class="hdr-inner">
+    <div class="logo-block">
+      <div class="logo-icon">🎨</div>
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="logo-text">UltraThemeForge</span>
+          <span class="logo-badge">v1.0</span>
+        </div>
+        <div style="font-size:0.6rem;color:var(--text3);margin-top:1px;">150 Mockup Preview Engine · AI-Powered</div>
+      </div>
+    </div>
+    <div class="status-banner" id="status-banner">Initializing...</div>
+    <div class="runtime-error-panel" id="runtime-error-panel" role="alert" aria-live="assertive">
+      <span class="runtime-error-title">Startup Error:</span>
+      <span class="runtime-error-message" id="runtime-error-message">An error occurred while loading the app.</span>
+      <button class="btn btn-ghost" id="btn-runtime-error-dismiss" type="button">Dismiss</button>
+    </div>
+    <div class="hdr-stats">
+      <div class="hdr-stat"><div class="hdr-stat-n">50</div><div class="hdr-stat-l">Types</div></div>
+      <div class="hdr-stat"><div class="hdr-stat-n">3</div><div class="hdr-stat-l">Variants</div></div>
+      <div class="hdr-stat"><div class="hdr-stat-n" id="total-generated">0</div><div class="hdr-stat-l">Generated</div></div>
+      
+    </div>
+    <div class="hdr-actions">
+      <button class="hdr-btn" id="btn-overview">📊 All Types</button>
+      <button class="hdr-btn" id="btn-about">📖 About</button>
+      <button class="hdr-btn" id="btn-export">⬇️ Export</button>
+      <button class="hdr-btn" id="btn-save-all">💾 Save All Generated</button>
+      <button class="hdr-btn" id="btn-saved-tab">📁 Saved</button>
+      <button class="hdr-btn" id="mobile-menu-btn" aria-label="Open menu" style="display:none;">☰</button>
+    </div>
+  </div>
+</header>
+
+<div class="main-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-input" placeholder="Search types...">
+    </div>
+    <div id="sidebar-content"></div>
+  </aside>
+
+  <!-- Content Area -->
+  <main class="content-area" id="main-content">
+    <!-- Mobile-only: design tools relocated from the sidebar (populated by renderSidebar) -->
+    <div id="mobile-tools-panel"></div>
+
+    <!-- Live Preview Section -->
+    <div class="live-preview-section" id="live-preview-section" style="display:none;">
+      <div class="live-preview-header">
+        <div class="live-preview-title">🎨 Live Theme Preview</div>
+        <div class="live-preview-controls">
+          <select id="preview-device" class="preview-select">
+            <option value="desktop">Desktop</option>
+            <option value="tablet">Tablet</option>
+            <option value="mobile">Mobile</option>
+          </select>
+          <button class="preview-btn" onclick="toggleLivePreview()">Hide Preview</button>
+        </div>
+      </div>
+      <div class="live-preview-content" id="live-preview-content">
+        <div class="preview-mockup" id="preview-mockup">
+          <div class="preview-iframe-container">
+            <iframe id="preview-iframe" src="about:blank" frameborder="0"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Welcome state -->
+    <div class="welcome-state" id="welcome-state">
+      <div class="welcome-icon">🎨</div>
+      <div class="welcome-title">UltraThemeForge</div>
+      <div class="welcome-sub">The ultimate AI-powered mockup preview engine. Browse 50 web types, generate 3 stunning variants each — 150 unique previews total.</div>
+      <div class="welcome-grid">
+        <div class="welcome-card"><div class="welcome-card-n">50</div><div class="welcome-card-l">Website Types</div></div>
+        <div class="welcome-card"><div class="welcome-card-n">3</div><div class="welcome-card-l">Style Variants</div></div>
+        <div class="welcome-card"><div class="welcome-card-n">150</div><div class="welcome-card-l">Total Mockups</div></div>
+      </div>
+      <div class="start-hint"><span class="hint-desktop">👈 Select a type from the sidebar to begin</span><span class="hint-mobile" style="display:none;">☰ Tap the menu to browse &amp; pick a type</span></div>
+      <!-- Mobile-only quick start card (mirrors the About panel footer) -->
+      <div class="home-ready-card">
+        <div class="about-footer-title">🎨 Ready to Generate?</div>
+        <div class="about-footer-sub">Get your API key from Google AI Studio → paste it in the app → start generating. Use the Gemini model selector to choose quality vs cost.</div>
+        <button class="btn btn-primary" id="btn-home-start-static">🚀 Start with Static Website</button>
+        <button class="btn btn-secondary" id="btn-home-overview">📊 View All 50 Types</button>
+      </div>
+    </div>
+
+    <!-- Type view (hidden initially) -->
+    <div id="type-view" style="display:none;">
+      <div class="type-header">
+        <div class="type-title-block">
+          <div class="type-title" id="type-title">—</div>
+          <div class="type-subtitle" id="type-subtitle">—</div>
+          <div class="type-meta" id="type-meta"></div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ghost" id="btn-back-home" title="Back to Home">⌂ Home</button>
+          <button class="btn btn-ghost" id="btn-show-saved">📁 Saved</button>
+        </div>
+      </div>
+
+      <!-- Compact API key status shown when a key is saved -->
+      <div id="api-key-compact" class="api-key-compact" style="display:none;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="font-size:0.92rem;color:var(--text2);">API key saved</div>
+          <div style="display:flex;gap:8px;margin-left:auto;">
+            <button class="btn btn-ghost" id="btn-show-api-setup">Manage Key</button>
+            <button class="btn btn-ghost" id="btn-delete-api-key-compact">Delete Key</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- API Setup -->
+      <div class="api-setup" id="api-setup">
+        <div class="api-setup-icon">🔑</div>
+        <div class="api-setup-text">
+          <div class="api-setup-title">Connect Google AI Studio (Gemini) to Generate Mockups</div>
+          <div class="api-setup-sub">Enter your Google AI Studio API key to enable AI-powered mockup generation. Keys are stored locally in your browser only.</div>
+          <div class="api-input-row">
+            <input type="password" class="api-input" id="api-key-input" placeholder="AIza...">
+            <div style="display:flex;gap:8px;align-items:center;">
+              <button class="btn btn-primary" id="btn-save-api-key" style="flex-shrink:0;">Save Key</button>
+              <button class="btn btn-ghost" id="btn-delete-api-key" style="flex-shrink:0;">Delete Key</button>
+            </div>
+          </div>
+          <div class="api-input-row" style="margin-top:10px; gap:8px; align-items:center;">
+            <label for="model-select" style="font-size:0.82rem; color:var(--text2); min-width:64px;">Model</label>
+            <select id="model-select" class="api-input" style="max-width:380px;">
+              <option value="gemini-2.5-flash">Gemini 2.5 Flash — Recommended</option>
+              <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash-Lite — Fastest &amp; cheapest</option>
+              <option value="gemini-3.5-flash">Gemini 3.5 Flash — Highest quality</option>
+            </select>
+            <button class="btn btn-ghost" id="btn-save-model" style="flex-shrink:0;">Save Model</button>
+          </div>
+          <!-- Model usage summary, help toggle & management -->
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div id="model-usage" class="model-usage" style="margin-top:8px; display:flex; gap:8px; align-items:center;">
+              <div class="mu-summary-text" style="font-size:0.84rem; color:var(--text2);">Loading usage...</div>
+              <button id="mu-help-toggle" class="icon-btn" aria-expanded="false" title="Show usage help" style="margin-left:6px;">▾</button>
+              <button class="btn btn-ghost" id="mu-manage-btn" style="margin-left:auto;">Manage</button>
+            </div>
+            <div id="mu-help" class="mu-help" style="display:none; font-size:0.82rem; color:var(--text2);">
+              <div style="padding:8px 10px; background: rgba(255,255,255,0.01); border-radius:6px; border:1px solid rgba(255,255,255,0.02);">
+                Enter the amount you added (after completing your payment) into the <strong>Available Credit</strong> field once the funds are received to estimate remaining mockups and to track the limits left.
+              </div>
+            </div>
+          </div>
+          <div id="model-usage-details" class="mu-details" style="display:none; margin-top:8px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <label style="font-size:0.82rem;color:var(--text2);">Available credit ($)</label>
+              <input id="mu-credit-input" type="number" step="0.01" min="0" value="5.00" style="width:110px;padding:6px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);">
+            </div>
+            <div style="margin-top:8px; display:flex; gap:8px;">
+              <button class="btn btn-primary" id="mu-save-credit">Save Credit</button>
+              <button class="btn btn-ghost" id="mu-reset-usage">Reset Usage</button>
+            </div>
+            <div id="mu-breakdown" style="margin-top:10px; font-size:0.82rem; color:var(--text2);"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="progress-bar" id="progress-bar">
+        <span style="font-size:0.75rem;color:var(--text2);white-space:nowrap;" id="progress-label">Generating...</span>
+        <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+        <span class="progress-text" id="progress-text">0/3</span>
+        <span class="progress-cancel" id="progress-cancel">✕ Cancel</span>
+      </div>
+
+      <!-- Variant selector -->
+      <div class="variant-row" id="variant-selector"></div>
+
+      <!-- Mockups grid -->
+      <div class="mockups-grid" id="mockups-grid"></div>
+    </div>
+
+    <div id="saved-view" style="display:none;">
+      <div class="saved-header">
+        <div>
+          <div class="type-title">💾 Saved Mockups</div>
+          <div class="type-subtitle" id="saved-subtitle">Saved mockups remain available even after clearing generated previews. Save individual mockups or all generated mockups for later reuse.</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <button class="btn btn-ghost" id="btn-show-types">← Back to Types</button>
+        </div>
+      </div>
+      <div class="saved-summary" id="saved-summary"></div>
+      <div class="saved-grid" id="saved-grid"></div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal for fullscreen preview -->
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="mockup-browser-dots">
+        <div class="browser-dot r"></div>
+        <div class="browser-dot y"></div>
+        <div class="browser-dot g"></div>
+      </div>
+      <div class="modal-browser-bar">
+        <span>🔒</span>
+        <span class="modal-url" id="modal-url">localhost/mockup</span>
+      </div>
+      <button class="icon-btn" id="btn-copy-modal" title="Copy HTML">📋</button>
+      <button class="modal-close" id="btn-modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <iframe id="modal-iframe" title="Mockup Preview"></iframe>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     ABOUT PANEL
+══════════════════════════════════════════════════════ -->
+<div class="about-backdrop" id="about-backdrop">
+  <div class="about-panel" id="about-panel">
+
+    <!-- Close -->
+    <div class="about-close-row">
+      <button class="about-close-btn" id="btn-about-close">✕ Close</button>
+    </div>
+
+    <!-- ── HERO ─────────────────────────────────────── -->
+    <div class="about-hero">
+      <div class="about-hero-grid-lines"></div>
+      <div class="about-logo-badge">
+        <div class="about-logo-dot"></div>
+        UltraThemeForge v1.0
+      </div>
+      <div class="about-hero-title">150 Mockup<br>Preview Engine</div>
+      <div class="about-hero-sub">The most advanced AI-powered web design preview tool. Generate pixel-perfect mockups for every type of website — in three distinct visual styles — all inside your browser.</div>
+      <div class="about-hero-stats">
+        <div class="about-hero-stat"><div class="about-hero-stat-n">50</div><div class="about-hero-stat-l">Website Types</div></div>
+        <div class="about-hero-stat"><div class="about-hero-stat-n">3</div><div class="about-hero-stat-l">Style Variants</div></div>
+        <div class="about-hero-stat"><div class="about-hero-stat-n">150</div><div class="about-hero-stat-l">Total Mockups</div></div>
+        <div class="about-hero-stat"><div class="about-hero-stat-n">9</div><div class="about-hero-stat-l">Categories</div></div>
+      </div>
+    </div>
+
+    <!-- ── WHAT IS THIS ──────────────────────────────── -->
+    <div class="about-grid-2">
+      <div class="about-card about-card-accent">
+        <div class="about-card-tag">🎯 What is this?</div>
+        <div class="about-card-title">🎨 About UltraThemeForge</div>
+        <div class="about-card-body">UltraThemeForge is an AI-powered website mockup generator that creates fully working HTML/CSS/JS previews for 50 different types of websites. Each type gets 3 unique visual variants — Clean, Bold, and Dark — giving you 150 completely different mockup designs in total.<br><br>Powered by Google AI Studio (Gemini), every mockup is a real, functional HTML page — not a wireframe or template. You get actual code you can copy, study, and adapt for your own projects.</div>
+        <div class="about-feat-list">
+          <div class="about-feat-item"><div class="about-feat-icon">✅</div>Real working HTML/CSS/JS output</div>
+          <div class="about-feat-item"><div class="about-feat-icon">✅</div>Saved locally — works offline after generation</div>
+          <div class="about-feat-item"><div class="about-feat-icon">✅</div>Copy any mockup's full source code instantly</div>
+          <div class="about-feat-item"><div class="about-feat-icon">✅</div>Fullscreen preview with browser chrome UI</div>
+        </div>
+        <div style="margin-top:12px;font-size:0.88rem;color:var(--text2);line-height:1.5;">
+          <strong>What's new (v1.0):</strong> Responsive previews, lazy-loading of previews, mobile sidebar & hamburger fix, improved API timeouts and error handling, in-app Gemini model selector (2.5 Flash / 2.5 Flash-Lite / 3.5 Flash) and per-model usage/credit tracker, safer localStorage parsing, and performance optimizations.
+        </div>
+      </div>
+      
+      <div class="about-card">
+        <div class="about-card-tag">🗂️ Categories</div>
+        <div class="about-card-title">📦 50 Types Across 9 Categories</div>
+        <div class="about-card-body">Every major web technology, purpose, and design system is covered:</div>
+        <div class="about-cats">
+          <div class="about-cat-pill"><span>🌐</span> Basic Website Types <strong style="color:var(--violet);margin-left:3px;">×4</strong></div>
+          <div class="about-cat-pill"><span>🎨</span> Frontend Tech <strong style="color:var(--violet);margin-left:3px;">×9</strong></div>
+          <div class="about-cat-pill"><span>⚙️</span> Backend Tech <strong style="color:var(--violet);margin-left:3px;">×7</strong></div>
+          <div class="about-cat-pill"><span>🏗️</span> Full-Stack Types <strong style="color:var(--violet);margin-left:3px;">×3</strong></div>
+          <div class="about-cat-pill"><span>✏️</span> Design & UI/UX <strong style="color:var(--violet);margin-left:3px;">×5</strong></div>
+          <div class="about-cat-pill"><span>🎯</span> Website Purposes <strong style="color:var(--violet);margin-left:3px;">×11</strong></div>
+          <div class="about-cat-pill"><span>🚀</span> Advanced Web Types <strong style="color:var(--violet);margin-left:3px;">×4</strong></div>
+          <div class="about-cat-pill"><span>🎨</span> Styling Systems <strong style="color:var(--violet);margin-left:3px;">×4</strong></div>
+          <div class="about-cat-pill"><span>⚙️</span> Other Categories <strong style="color:var(--violet);margin-left:3px;">×3</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 3 VARIANTS ────────────────────────────────── -->
+    <div class="about-card" style="margin-bottom:16px;">
+      <div class="about-card-tag">🎨 Style Variants</div>
+      <div class="about-card-title">Three Distinct Visual Styles Per Type</div>
+      <div class="about-card-body">Every website type is generated in 3 completely different visual personalities — making all 150 mockups look unique from each other:</div>
+      <div class="variant-showcase">
+        <div class="vs-item">
+          <div class="vs-dot vs-dot-clean"></div>
+          <div class="vs-name">🤍 Clean Light</div>
+          <div class="vs-desc">Minimal white UI · soft shadows · generous whitespace · Apple-inspired refinement · modern SaaS aesthetic · subtle borders</div>
+          <div class="vs-tag"><span class="pricing-badge pb-violet">Variant 1</span></div>
+        </div>
+        <div class="vs-item">
+          <div class="vs-dot vs-dot-bold"></div>
+          <div class="vs-name">🔥 Bold Creative</div>
+          <div class="vs-desc">Vibrant saturated colors · asymmetric grid sections · editorial magazine feel · large statement typography · high contrast · geometric accents</div>
+          <div class="vs-tag"><span class="pricing-badge pb-violet">Variant 2</span></div>
+        </div>
+        <div class="vs-item">
+          <div class="vs-dot vs-dot-dark"></div>
+          <div class="vs-name">🌑 Dark Futuristic</div>
+          <div class="vs-desc">Near-black background · neon purple/cyan glow · glassmorphism panels · gradient meshes · cyberpunk aesthetic · monospace + display font mixing</div>
+          <div class="vs-tag"><span class="pricing-badge pb-green">Variant 3</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── API GUIDE ─────────────────────────────────── -->
+    <div class="about-section-heading">🔑 API Connection Guide</div>
+
+    <div class="about-grid-2" style="margin-bottom:16px;">
+      <div class="about-card">
+        <div class="about-card-tag">📋 Step-by-Step</div>
+        <div class="about-card-title">How to Get Your API Key</div>
+        <div class="about-steps">
+          <div class="about-step">
+            <div class="about-step-num">1</div>
+            <div class="about-step-content">
+              <div class="about-step-title">Open Google AI Studio</div>
+              <div class="about-step-desc">Go to Google AI Studio and sign in with your Google account — no credit card needed for the free tier.</div>
+              <div class="about-step-code">https://aistudio.google.com/apikey</div>
+            </div>
+          </div>
+          <div class="about-step">
+            <div class="about-step-num">2</div>
+            <div class="about-step-content">
+              <div class="about-step-title">Navigate to API Keys</div>
+              <div class="about-step-desc">Click "Get API key" — AI Studio shows your existing keys and lets you create new ones.</div>
+            </div>
+          </div>
+          <div class="about-step">
+            <div class="about-step-num">3</div>
+            <div class="about-step-content">
+              <div class="about-step-title">Create a New Key</div>
+              <div class="about-step-desc">Click "Create API key", pick (or auto-create) a project, and copy the key.</div>
+              <div class="about-step-code">AIza... (your Google API key)</div>
+            </div>
+          </div>
+          <div class="about-step">
+            <div class="about-step-num">4</div>
+            <div class="about-step-content">
+              <div class="about-step-title">Paste Into the App</div>
+              <div class="about-step-desc">Select any type from the sidebar → paste your key in the API Setup banner → click Save Key. Done.</div>
+            </div>
+          </div>
+          <div class="about-step">
+            <div class="about-step-num">5</div>
+            <div class="about-step-content">
+              <div class="about-step-title">Start Generating!</div>
+              <div class="about-step-desc">Click "⚡ Generate All 3" on any type to create all 3 variants at once, or click individual placeholder cards.</div>
+            </div>
+          </div>
+        </div>
+        <div class="about-tip">
+          <div class="about-tip-icon">🔒</div>
+          <div class="about-tip-text">Your API key is stored only in your browser's localStorage — it never leaves your device or gets sent anywhere except directly to Google AI Studio (Generative Language API) servers.</div>
+        </div>
+      </div>
+
+      <div class="about-card">
+        <div class="about-card-tag">💰 Pricing & Credits</div>
+        <div class="about-card-title">How Much Does It Cost?</div>
+        <div class="about-card-body">The Gemini API has a <strong style="color:var(--green);">free tier</strong> with daily request limits — no credit card required. For higher limits, enable the pay-as-you-go paid tier; costs per mockup are tiny:</div>
+        <div class="about-pricing">
+          <div class="pricing-row best">
+            <div class="pricing-model">Gemini 2.5 Flash ⭐ Recommended</div>
+            <div class="pricing-cost">~$0.02</div>
+            <div class="pricing-count">per mockup</div>
+            <span class="pricing-badge pb-green">150 mockups → ~$3</span>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-model">Gemini 2.5 Flash-Lite</div>
+            <div class="pricing-cost">~$0.004</div>
+            <div class="pricing-count">per mockup</div>
+            <span class="pricing-badge pb-violet">150 mockups → ~$0.60</span>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-model">Gemini 3.5 Flash</div>
+            <div class="pricing-cost">~$0.08</div>
+            <div class="pricing-count">per mockup</div>
+            <span class="pricing-badge" style="background:rgba(255,77,109,0.1);color:var(--red);border:1px solid rgba(255,77,109,0.2);">Premium quality</span>
+          </div>
+        </div>
+        <div class="about-info" style="margin-top:14px;">
+          <div style="font-size:1rem;flex-shrink:0;">💡</div>
+          <div class="about-info-text"><strong>Best strategy:</strong> Generate all 150 mockups with Gemini 2.5 Flash-Lite (~$0.60 total, or free within the daily free-tier limits). Switch to Gemini 2.5 Flash or 3.5 Flash for types you want higher quality on.</div>
+        </div>
+        <div class="about-tip">
+          <div class="about-tip-icon">⚙️</div>
+          <div class="about-tip-text">Switch models from inside the app: save your Google AI Studio API key, then choose a model from the <strong>Model</strong> dropdown in the API Setup banner. Options include Gemini 2.5 Flash (recommended), Gemini 2.5 Flash-Lite, and Gemini 3.5 Flash. The selected model is saved locally.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── USAGE GUIDE ───────────────────────────────── -->
+    <div class="about-section-heading">📖 Usage Guide</div>
+
+    <div class="about-grid-3" style="margin-bottom:16px;">
+      <div class="about-card">
+        <div class="about-card-tag">🧭 Navigation</div>
+        <div class="about-card-title">Using the Sidebar</div>
+        <div class="about-card-body">The left sidebar lists all 50 website types organized in 9 collapsible categories. Use the search bar at the top to instantly filter by name. Each type shows 3 colored dots — they fill purple once that variant has been generated.</div>
+        <div class="about-feat-list">
+          <div class="about-feat-item"><div class="about-feat-icon">🔍</div>Type in the search bar to find any type</div>
+          <div class="about-feat-item"><div class="about-feat-icon">▶️</div>Click a category header to collapse/expand it</div>
+          <div class="about-feat-item"><div class="about-feat-icon">🟣</div>Purple dots = generated, empty = not yet</div>
+        </div>
+      </div>
+      <div class="about-card">
+        <div class="about-card-tag">⚡ Generating</div>
+        <div class="about-card-title">Generating Mockups</div>
+        <div class="about-card-body">Select any type from the sidebar and choose how many to generate at once. Progress is shown with a live bar and the mockups appear as iframes in the preview cards.</div>
+        <div class="about-feat-list">
+          <div class="about-feat-item"><div class="about-feat-icon">⚡</div>"Generate All 3" — creates all variants for current type</div>
+          <div class="about-feat-item"><div class="about-feat-icon">🖱️</div>Click any placeholder card to generate just that one</div>
+          <div class="about-feat-item"><div class="about-feat-icon">🔄</div>"Regenerate" button on any card for a fresh version</div>
+          <div class="about-feat-item"><div class="about-feat-icon">📊</div>"All Types" button to see the full overview grid</div>
+        </div>
+      </div>
+      <div class="about-card">
+        <div class="about-card-tag">🖥️ Previewing</div>
+        <div class="about-card-title">Viewing & Using Mockups</div>
+        <div class="about-card-body">Each mockup renders inside a scaled-down iframe browser frame. Hover to reveal the fullscreen button. All generated mockups are auto-saved to your browser.</div>
+        <div class="about-feat-list">
+          <div class="about-feat-item"><div class="about-feat-icon">⛶</div>Hover a card → click fullscreen for 100% view</div>
+          <div class="about-feat-item"><div class="about-feat-icon">📋</div>Click 📋 to copy the full HTML source code</div>
+          <div class="about-feat-item"><div class="about-feat-icon">💾</div>Mockups survive page refresh — saved locally</div>
+          <div class="about-feat-item"><div class="about-feat-icon">⬇️</div>"Export" button downloads a JSON manifest</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── KEYBOARD SHORTCUTS ────────────────────────── -->
+    <div class="about-grid-2" style="margin-bottom:16px;">
+      <div class="about-card">
+        <div class="about-card-tag">⌨️ Shortcuts</div>
+        <div class="about-card-title">Keyboard Shortcuts</div>
+        <div class="kbd-chips">
+          <div class="kbd-chip-row"><span class="kbd-chip">Ctrl + G</span><span class="kbd-chip-desc">Generate all 3 variants for current type</span></div>
+          <div class="kbd-chip-row"><span class="kbd-chip">Escape</span><span class="kbd-chip-desc">Close fullscreen preview modal</span></div>
+          <div class="kbd-chip-row"><span class="kbd-chip">Click outside</span><span class="kbd-chip-desc">Close this About panel</span></div>
+        </div>
+      </div>
+      <div class="about-card">
+        <div class="about-card-tag">🔋 Offline Support</div>
+        <div class="about-card-title">Works Offline After Generation</div>
+        <div class="about-card-body">Once a mockup is generated, it's saved to your browser's localStorage as complete HTML. The app works fully offline for previewing, copying, and browsing all saved mockups — no internet needed.<br><br>Only generating new mockups requires an active internet connection to reach Google AI Studio (Gemini).</div>
+        <div class="about-info">
+          <div style="font-size:1rem;flex-shrink:0;">💾</div>
+          <div class="about-info-text">localStorage stores up to ~5MB per domain. 150 full HTML mockups may approach this limit. If storage is full, older mockups may be cleared — export important ones as HTML files first.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── HOW AI GENERATES ──────────────────────────── -->
+    <div class="about-card" style="margin-bottom:16px;">
+      <div class="about-card-tag">🤖 How It Works</div>
+      <div class="about-card-title">How the AI Generates Each Mockup</div>
+      <div class="about-card-body">Each generation call sends a carefully crafted master prompt to Google AI Studio (Gemini) that includes three layers of instruction — ensuring every mockup is unique, realistic, and appropriate for its type:</div>
+      <div class="about-grid-3" style="margin-top:14px;margin-bottom:0;">
+        <div style="background:var(--surf3);border:1px solid var(--border);border-radius:12px;padding:14px;">
+          <div style="font-size:1.2rem;margin-bottom:6px;">📐</div>
+          <div style="font-family:var(--head);font-size:0.82rem;font-weight:600;color:var(--text);margin-bottom:4px;">Master Prompt</div>
+          <div style="font-size:0.72rem;color:var(--text2);line-height:1.6;">Global quality rules: pixel-perfect UI, real content, no Lorem Ipsum, navbar + hero + sections + footer structure, Google Fonts required.</div>
+        </div>
+        <div style="background:var(--surf3);border:1px solid var(--border);border-radius:12px;padding:14px;">
+          <div style="font-size:1.2rem;margin-bottom:6px;">🌐</div>
+          <div style="font-family:var(--head);font-size:0.82rem;font-weight:600;color:var(--text);margin-bottom:4px;">Type Context</div>
+          <div style="font-size:0.72rem;color:var(--text2);line-height:1.6;">Specific instructions for that website type — terminology, UI patterns, content sections, and layout logic appropriate for e.g. "E-commerce" vs "AI-Powered".</div>
+        </div>
+        <div style="background:var(--surf3);border:1px solid var(--border);border-radius:12px;padding:14px;">
+          <div style="font-size:1.2rem;margin-bottom:6px;">🎨</div>
+          <div style="font-family:var(--head);font-size:0.82rem;font-weight:600;color:var(--text);margin-bottom:4px;">Variant Style</div>
+          <div style="font-size:0.72rem;color:var(--text2);line-height:1.6;">Visual personality rules — color palette, typography style, spacing approach, and aesthetic tone specific to Clean / Bold / Dark.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FOOTER ────────────────────────────────────── -->
+    <div class="about-footer">
+      <div class="about-footer-title">🎨 Ready to Generate?</div>
+      <div class="about-footer-sub">Get your API key from Google AI Studio → paste it in the app → start generating. Use the Gemini model selector to choose quality vs cost.</div>
+      <div class="about-footer-actions">
+        <button class="btn btn-primary" id="btn-start-static">🚀 Start with Static Website</button>
+        <button class="btn btn-secondary" id="btn-about-overview">📊 View All 50 Types</button>
+        <button class="btn btn-ghost" id="btn-about-close-bottom">✕ Close</button>
+      </div>
+    </div>
+
+  </div><!-- /about-panel -->
+</div><!-- /about-backdrop -->
+
+<!-- Toast container -->
+<div class="toast-container" id="toast-container"></div>
+<script defer src="js/app.js"></script>
+</body>
+</html>
