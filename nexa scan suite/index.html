@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nexa Scan Suite V1.0 - Offline QR and Barcode Suite</title>
+<meta name="theme-color" content="#f5f5f7"/>
+<link rel="icon" type="image/svg+xml" href="assets/icons/nexa-scan-suite.svg"/>
+<!-- ZXing Library for Barcode Decoding -->
+<script src="assets/vendor/zxing-0.21.3.min.js" defer></script>
+<script defer src="js/app.js"></script>
+<link rel="stylesheet" href="css/style.css">
+
+
+<!-- QRCode.js inline -->
+
+<meta name="description" content="Offline V1.0 QR and barcode suite for browser-local generation, decoding, history, copy, and download workflows.">
+
+
+</head>
+<body>
+<a href="#mainContent" class="sr-skip">Skip to main content</a>
+<button class="v1-theme-toggle" id="scanThemeToggle" type="button" aria-label="Switch between white and purple theme" aria-pressed="false">
+  <span class="theme-toggle-icon" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </span>
+</button>
+
+
+<!-- ═══════════════════════════════════════════════
+     MOBILE APP SHELL  (≤768px only)
+     ═══════════════════════════════════════════════ -->
+<div id="mobApp">
+
+  <!-- ── Header ────────────────────────────────── -->
+  <div id="mobHeader">
+    <div class="mob-logo">Nexa<em>&nbsp;Scan</em><div class="mob-logo-dot"></div></div>
+    <div class="mob-hdr-right"></div>
+  </div>
+
+  <!-- ── Scrollable body ───────────────────────── -->
+  <div id="mobBody">
+
+    <!-- PAGE: QR Generate -->
+    <div class="mob-page mob-active" id="mpQRGen">
+      <!-- ── QR Section Hero (mirrors desktop header) ── -->
+      <div class="mob-section-hero">
+        <div class="mob-hero-icon-wrap">
+          <!-- Static QR pattern: finder squares + data modules -->
+          <svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Top-left finder -->
+            <rect x="3" y="3" width="16" height="16" rx="2.5" fill="none" stroke="rgba(138,92,246,0.75)" stroke-width="1.5"/>
+            <rect x="6.5" y="6.5" width="9" height="9" rx="1.5" fill="#8a5cf6" opacity="0.9"/>
+            <!-- Top-right finder -->
+            <rect x="27" y="3" width="16" height="16" rx="2.5" fill="none" stroke="rgba(138,92,246,0.75)" stroke-width="1.5"/>
+            <rect x="30.5" y="6.5" width="9" height="9" rx="1.5" fill="#8a5cf6" opacity="0.9"/>
+            <!-- Bottom-left finder -->
+            <rect x="3" y="27" width="16" height="16" rx="2.5" fill="none" stroke="rgba(138,92,246,0.75)" stroke-width="1.5"/>
+            <rect x="6.5" y="30.5" width="9" height="9" rx="1.5" fill="#8a5cf6" opacity="0.9"/>
+            <!-- Data modules (bottom-right area) -->
+            <rect x="27" y="27" width="3.5" height="3.5" rx="0.6" fill="#22d3ee" opacity="0.85"/>
+            <rect x="32" y="27" width="3.5" height="3.5" rx="0.6" fill="#8a5cf6" opacity="0.7"/>
+            <rect x="37" y="27" width="6" height="3.5" rx="0.6" fill="#22d3ee" opacity="0.6"/>
+            <rect x="27" y="32" width="7" height="3.5" rx="0.6" fill="#8a5cf6" opacity="0.65"/>
+            <rect x="36.5" y="32" width="3.5" height="3.5" rx="0.6" fill="#22d3ee" opacity="0.8"/>
+            <rect x="27" y="37" width="3.5" height="6" rx="0.6" fill="#22d3ee" opacity="0.7"/>
+            <rect x="32" y="37" width="11.5" height="3.5" rx="0.6" fill="#8a5cf6" opacity="0.7"/>
+            <rect x="32" y="41.5" width="3.5" height="1.5" rx="0.4" fill="#22d3ee" opacity="0.85"/>
+            <rect x="40" y="41.5" width="3.5" height="1.5" rx="0.4" fill="#8a5cf6" opacity="0.6"/>
+          </svg>
+          <div class="mob-hero-corner tl"></div>
+          <div class="mob-hero-corner tr"></div>
+          <div class="mob-hero-corner bl"></div>
+          <div class="mob-hero-corner br"></div>
+          <div class="mob-hero-scan"></div>
+        </div>
+        <h2 class="mob-section-title">Qr<em>ix</em></h2>
+        <div class="mob-section-badge">
+          <div class="mob-badge-icon">
+            <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+              <rect x="1" y="1" width="5" height="5" rx="1" fill="white" opacity="0.95"/>
+              <rect x="8" y="1" width="5" height="5" rx="1" fill="white" opacity="0.75"/>
+              <rect x="1" y="8" width="5" height="5" rx="1" fill="white" opacity="0.75"/>
+              <rect x="9" y="9" width="3" height="3" rx="0.5" fill="white" opacity="0.5"/>
+              <rect x="8" y="8" width="1.5" height="1.5" rx="0.3" fill="white" opacity="0.9"/>
+            </svg>
+          </div>
+          Professional QR Suite
+        </div>
+      </div>
+      <!-- ── End QR Section Hero ── -->
+      <div class="mob-card">
+        <div class="mob-card-hd">Content Type</div>
+        <div class="mob-type-container" id="mobTypeGrid"></div>
+      </div>
+      <div class="mob-card" id="mobQRFormCard">
+        <div class="mob-card-hd">Content</div>
+        <div id="mobQRFormArea"></div>
+      </div>
+      <div class="mob-card" id="mobQRPreviewCard" style="display:none">
+        <div class="mob-card-hd">Preview</div>
+        <div class="mob-canvas-wrap" id="mobQRCanvasWrap">
+          <div class="mob-qr-placeholder"><div class="mob-ph-icon">▣</div><span>QR code appears here</span></div>
+        </div>
+        <div class="mob-action-row" id="mobQRActions" style="display:none;margin-top:10px"></div>
+      </div>
+      <div class="mob-card">
+        <div class="mob-card-hd">Style &amp; Quality</div>
+        <!-- EC -->
+        <div class="mob-field">
+          <label class="mob-field-label">Error Correction</label>
+          <div class="mob-ec-row" id="mobEcRow">
+            <button type="button" class="mob-ec-btn" data-ec="L" onclick="mobSetEC('L',this)">L<br><small style="font-weight:300">7%</small></button>
+            <button type="button" class="mob-ec-btn active" data-ec="M" onclick="mobSetEC('M',this)">M<br><small style="font-weight:300">15%</small></button>
+            <button type="button" class="mob-ec-btn" data-ec="Q" onclick="mobSetEC('Q',this)">Q<br><small style="font-weight:300">25%</small></button>
+            <button type="button" class="mob-ec-btn" data-ec="H" onclick="mobSetEC('H',this)">H<br><small style="font-weight:300">30%</small></button>
+          </div>
+        </div>
+        <!-- Size slider -->
+        <div class="mob-field">
+          <label class="mob-field-label">Module Size — <span id="mobSizeVal">5 px</span></label>
+          <input type="range" class="mob-slider" id="mobSizeSlider" min="2" max="12" value="5" oninput="mobSyncSize(this.value)">
+        </div>
+        <!-- Colors -->
+        <div class="mob-2col">
+          <div class="mob-field">
+            <label class="mob-field-label">Dark Color</label>
+            <div class="mob-swatch-row">
+              <div class="mob-swatch" id="mobDarkSwatch" style="background:#000">
+                <input type="color" value="#000000" id="mobDarkColor" oninput="mobSyncColor('dark',this.value)">
+              </div>
+              <span class="mob-swatch-val" id="mobDarkVal">#000000</span>
+            </div>
+          </div>
+          <div class="mob-field">
+            <label class="mob-field-label">Light Color</label>
+            <div class="mob-swatch-row">
+              <div class="mob-swatch" id="mobLightSwatch" style="background:#fff">
+                <input type="color" value="#ffffff" id="mobLightColor" oninput="mobSyncColor('light',this.value)">
+              </div>
+              <span class="mob-swatch-val" id="mobLightVal">#ffffff</span>
+            </div>
+          </div>
+        </div>
+        <!-- Presets -->
+        <div class="mob-field">
+          <label class="mob-field-label">Presets</label>
+          <div class="mob-preset-grid">
+            <button type="button" class="mob-preset" onclick="mobApplyQRPreset('#000000','#ffffff')"><div class="mob-preset-bar" style="background:linear-gradient(135deg,#000 50%,#fff 50%)"></div><div class="mob-preset-nm">Classic</div></button>
+            <button type="button" class="mob-preset" onclick="mobApplyQRPreset('#8a5cf6','#0d0d1a')"><div class="mob-preset-bar" style="background:linear-gradient(135deg,#8a5cf6 50%,#0d0d1a 50%)"></div><div class="mob-preset-nm">Violet</div></button>
+            <button type="button" class="mob-preset" onclick="mobApplyQRPreset('#22d3ee','#0a0a16')"><div class="mob-preset-bar" style="background:linear-gradient(135deg,#22d3ee 50%,#0a0a16 50%)"></div><div class="mob-preset-nm">Cyan</div></button>
+            <button type="button" class="mob-preset" onclick="mobApplyQRPreset('#f472b6','#1a0a14')"><div class="mob-preset-bar" style="background:linear-gradient(135deg,#f472b6 50%,#1a0a14 50%)"></div><div class="mob-preset-nm">Rose</div></button>
+            <button type="button" class="mob-preset" onclick="mobApplyQRPreset('#fb923c','#1a0d00')"><div class="mob-preset-bar" style="background:linear-gradient(135deg,#fb923c 50%,#1a0d00 50%)"></div><div class="mob-preset-nm">Amber</div></button>
+            <button type="button" class="mob-preset" onclick="mobApplyQRPreset('#4ade80','#001a08')"><div class="mob-preset-bar" style="background:linear-gradient(135deg,#4ade80 50%,#001a08 50%)"></div><div class="mob-preset-nm">Mint</div></button>
+            <button type="button" class="mob-preset" onclick="mobApplyQRPreset('#facc15','#1a1500')"><div class="mob-preset-bar" style="background:linear-gradient(135deg,#facc15 50%,#1a1500 50%)"></div><div class="mob-preset-nm">Gold</div></button>
+            <button type="button" class="mob-preset" onclick="mobApplyQRPreset('#ffffff','#000000')"><div class="mob-preset-bar" style="background:linear-gradient(135deg,#fff 50%,#000 50%)"></div><div class="mob-preset-nm">Invert</div></button>
+          </div>
+        </div>
+      </div>
+      <!-- Generate button — inline at bottom of page -->
+      <div class="mob-gen-wrap" id="mobQRGenWrap">
+        <button type="button" class="mob-gen-btn" id="mobGenQRBtn" onclick="mobDoGenQR()">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="white" opacity=".9"/><rect x="10" y="1" width="5" height="5" rx="1" fill="white" opacity=".7"/><rect x="1" y="10" width="5" height="5" rx="1" fill="white" opacity=".7"/><rect x="3" y="3" width="1" height="1" fill="white"/></svg>
+          Generate QR Code
+        </button>
+      </div>
+    </div><!-- /mpQRGen -->
+
+    <!-- PAGE: Barcode Generate -->
+    <div class="mob-page" id="mpBCGen">
+      <!-- ── Barcode Section Hero (mirrors desktop header) ── -->
+      <div class="mob-section-hero">
+        <div class="mob-hero-icon-wrap mob-bc-hero">
+          <!-- Static barcode bars pattern -->
+          <svg width="150" height="38" viewBox="0 0 150 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4"   y="3" width="2"   height="32" rx="0.5" fill="#22d3ee" opacity="0.9"/>
+            <rect x="8"   y="3" width="4"   height="32" rx="0.5" fill="#22d3ee" opacity="0.7"/>
+            <rect x="15"  y="3" width="2"   height="32" rx="0.5" fill="#22d3ee" opacity="0.85"/>
+            <rect x="19"  y="3" width="1"   height="32" rx="0.5" fill="#22d3ee" opacity="0.6"/>
+            <rect x="22"  y="3" width="3"   height="32" rx="0.5" fill="#22d3ee" opacity="0.75"/>
+            <rect x="28"  y="3" width="2"   height="32" rx="0.5" fill="#22d3ee" opacity="0.9"/>
+            <rect x="33"  y="3" width="1"   height="32" rx="0.5" fill="#22d3ee" opacity="0.65"/>
+            <rect x="37"  y="3" width="4"   height="32" rx="0.5" fill="#22d3ee" opacity="0.8"/>
+            <rect x="44"  y="3" width="2"   height="32" rx="0.5" fill="#22d3ee" opacity="0.7"/>
+            <rect x="49"  y="3" width="1"   height="32" rx="0.5" fill="#22d3ee" opacity="0.85"/>
+            <rect x="53"  y="3" width="3"   height="32" rx="0.5" fill="#22d3ee" opacity="0.6"/>
+            <rect x="59"  y="3" width="2"   height="32" rx="0.5" fill="#22d3ee" opacity="0.9"/>
+            <rect x="64"  y="3" width="1"   height="32" rx="0.5" fill="#22d3ee" opacity="0.75"/>
+            <rect x="67"  y="3" width="4"   height="32" rx="0.5" fill="#22d3ee" opacity="0.7"/>
+            <rect x="74"  y="3" width="2"   height="32" rx="0.5" fill="#22d3ee" opacity="0.85"/>
+            <rect x="79"  y="3" width="1"   height="32" rx="0.5" fill="#22d3ee" opacity="0.6"/>
+            <rect x="83"  y="3" width="3"   height="32" rx="0.5" fill="#22d3ee" opacity="0.8"/>
+            <rect x="89"  y="3" width="2"   height="32" rx="0.5" fill="#22d3ee" opacity="0.9"/>
+            <rect x="94"  y="3" width="1"   height="32" rx="0.5" fill="#22d3ee" opacity="0.65"/>
+            <rect x="97"  y="3" width="4"   height="32" rx="0.5" fill="#22d3ee" opacity="0.75"/>
+            <rect x="104" y="3" width="2"   height="32" rx="0.5" fill="#22d3ee" opacity="0.85"/>
+            <rect x="109" y="3" width="1"   height="32" rx="0.5" fill="#22d3ee" opacity="0.7"/>
+            <rect x="112" y="3" width="3"   height="32" rx="0.5" fill="#22d3ee" opacity="0.6"/>
+            <rect x="118" y="3" width="2"   height="32" rx="0.5" fill="#22d3ee" opacity="0.9"/>
+            <rect x="123" y="3" width="4"   height="32" rx="0.5" fill="#22d3ee" opacity="0.7"/>
+            <rect x="130" y="3" width="1"   height="32" rx="0.5" fill="#22d3ee" opacity="0.85"/>
+            <rect x="133" y="3" width="3"   height="32" rx="0.5" fill="#22d3ee" opacity="0.65"/>
+            <rect x="139" y="3" width="2"   height="32" rx="0.5" fill="#22d3ee" opacity="0.9"/>
+            <rect x="144" y="3" width="1"   height="32" rx="0.5" fill="#22d3ee" opacity="0.75"/>
+          </svg>
+          <div class="mob-hero-corner tl"></div>
+          <div class="mob-hero-corner tr"></div>
+          <div class="mob-hero-corner bl"></div>
+          <div class="mob-hero-corner br"></div>
+          <div class="mob-hero-scan"></div>
+        </div>
+        <h2 class="mob-section-title">Bar<span class="mob-bc-em">ix</span></h2>
+        <div class="mob-section-badge mob-bc-badge-pill">
+          <div class="mob-badge-icon">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <rect x="1"    y="2" width="1.5" height="12" rx="0.5" fill="white"/>
+              <rect x="4"    y="2" width="3"   height="12" rx="0.5" fill="white" opacity="0.7"/>
+              <rect x="8.5"  y="2" width="1"   height="12" rx="0.5" fill="white"/>
+              <rect x="11"   y="2" width="2"   height="12" rx="0.5" fill="white" opacity="0.6"/>
+              <rect x="14.5" y="2" width="1"   height="12" rx="0.5" fill="white" opacity="0.9"/>
+            </svg>
+          </div>
+          Barcode Generator
+        </div>
+      </div>
+      <!-- ── End Barcode Section Hero ── -->
+      <div class="mob-card">
+        <div class="mob-card-hd">Format</div>
+        <div class="mob-fmt-scroll" id="mobFmtScroll"></div>
+        <div style="margin-top:8px;font-size:11px;color:var(--txt3)" id="mobFmtInfo">Select a barcode format above</div>
+      </div>
+      <div class="mob-card">
+        <div class="mob-card-hd">Data</div>
+        <div class="mob-field">
+          <label class="mob-field-label" id="mobBCInputLabel">Value</label>
+          <input class="mob-input" id="mobBCInput" placeholder="Select a format first…" oninput="mobSyncBCInput(this.value)">
+          <div class="mob-field-hint" id="mobBCHint">Select a format above</div>
+        </div>
+      </div>
+      <div class="mob-card" id="mobBCPreviewCard" style="display:none">
+        <div class="mob-card-hd">Preview</div>
+        <div class="mob-canvas-wrap" id="mobBCCanvasWrap">
+          <div class="mob-bc-placeholder"><div class="mob-ph-icon">▬▬</div><span>Barcode appears here</span></div>
+        </div>
+        <div class="mob-action-row" id="mobBCActions" style="display:none;margin-top:10px"></div>
+      </div>
+      <div class="mob-card">
+        <div class="mob-card-hd">Appearance</div>
+        <div class="mob-2col">
+          <div class="mob-field">
+            <label class="mob-field-label">Bar Color</label>
+            <div class="mob-swatch-row">
+              <div class="mob-swatch" id="mobBCBarSwatch" style="background:#000">
+                <input type="color" value="#000000" id="mobBCBarColor" oninput="mobSyncBCColor('bar',this.value)">
+              </div>
+              <span class="mob-swatch-val" id="mobBCBarVal">#000000</span>
+            </div>
+          </div>
+          <div class="mob-field">
+            <label class="mob-field-label">Background</label>
+            <div class="mob-swatch-row">
+              <div class="mob-swatch" id="mobBCBgSwatch" style="background:#fff">
+                <input type="color" value="#ffffff" id="mobBCBgColor" oninput="mobSyncBCColor('bg',this.value)">
+              </div>
+              <span class="mob-swatch-val" id="mobBCBgVal">#ffffff</span>
+            </div>
+          </div>
+        </div>
+        <div class="mob-field">
+          <label class="mob-field-label">Bar Height — <span id="mobBCHeightVal">80 px</span></label>
+          <input type="range" class="mob-slider" id="mobBCHeight" min="40" max="200" value="80" oninput="mobSyncBCHeight(this.value)">
+        </div>
+        <div class="mob-field">
+          <label class="mob-field-label">Scale — <span id="mobBCScaleVal">2×</span></label>
+          <input type="range" class="mob-slider" id="mobBCScale" min="1" max="4" step="0.5" value="2" oninput="mobSyncBCScale(this.value)">
+        </div>
+        <div class="mob-field" style="display:flex;align-items:center;gap:10px">
+          <input type="checkbox" id="mobBCShowText" checked style="accent-color:var(--c);width:16px;height:16px;cursor:pointer" onchange="mobSyncBCShowText(this.checked)">
+          <label for="mobBCShowText" style="font-size:12px;color:var(--txt2);cursor:pointer">Show value text below barcode</label>
+        </div>
+        <!-- BC Presets -->
+        <div class="mob-field">
+          <label class="mob-field-label">Presets</label>
+          <div class="mob-preset-grid">
+            <button type="button" class="mob-preset" onclick="mobApplyBCPreset('#000000','#ffffff')"><div class="mob-preset-bar" style="background:linear-gradient(135deg,#000 50%,#fff 50%)"></div><div class="mob-preset-nm">Classic</div></button>
+            <button type="button" class="mob-preset" onclick="mobApplyBCPreset('#22d3ee','#0a1a1a')"><div class="mob-preset-bar" style="background:linear-gradient(135deg,#22d3ee 50%,#0a1a1a 50%)"></div><div class="mob-preset-nm">Cyan</div></button>
+            <button type="button" class="mob-preset" onclick="mobApplyBCPreset('#8a5cf6','#0d0d1a')"><div class="mob-preset-bar" style="background:linear-gradient(135deg,#8a5cf6 50%,#0d0d1a 50%)"></div><div class="mob-preset-nm">Violet</div></button>
+            <button type="button" class="mob-preset" onclick="mobApplyBCPreset('#facc15','#1a1500')"><div class="mob-preset-bar" style="background:linear-gradient(135deg,#facc15 50%,#1a1500 50%)"></div><div class="mob-preset-nm">Gold</div></button>
+            <button type="button" class="mob-preset" onclick="mobApplyBCPreset('#ffffff','#000000')"><div class="mob-preset-bar" style="background:linear-gradient(135deg,#fff 50%,#000 50%)"></div><div class="mob-preset-nm">Invert</div></button>
+            <button type="button" class="mob-preset" onclick="mobApplyBCPreset('#e11d48','#1a0008')"><div class="mob-preset-bar" style="background:linear-gradient(135deg,#e11d48 50%,#1a0008 50%)"></div><div class="mob-preset-nm">Crimson</div></button>
+            <button type="button" class="mob-preset" onclick="mobApplyBCPreset('#4ade80','#001a08')"><div class="mob-preset-bar" style="background:linear-gradient(135deg,#4ade80 50%,#001a08 50%)"></div><div class="mob-preset-nm">Mint</div></button>
+            <button type="button" class="mob-preset" onclick="mobApplyBCPreset('#fb923c','#1a0d00')"><div class="mob-preset-bar" style="background:linear-gradient(135deg,#fb923c 50%,#1a0d00 50%)"></div><div class="mob-preset-nm">Amber</div></button>
+          </div>
+        </div>
+      </div>
+      <!-- Generate button — inline at bottom of page -->
+      <div class="mob-gen-wrap" id="mobBCGenWrap">
+        <button type="button" class="mob-gen-btn bc" id="mobGenBCBtn" onclick="mobDoGenBC()">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="1.5" height="12" rx="0.5" fill="white"/><rect x="4" y="2" width="3" height="12" rx="0.5" fill="white" opacity=".7"/><rect x="8.5" y="2" width="1" height="12" rx="0.5" fill="white"/><rect x="11" y="2" width="2" height="12" rx="0.5" fill="white" opacity=".6"/></svg>
+          Generate Barcode
+        </button>
+      </div>
+    </div><!-- /mpBCGen -->
+
+    <!-- PAGE: Decode — Live Camera Scanner -->
+    <div class="mob-page" id="mpDecode">
+
+      <!-- ── Viewfinder card ── -->
+      <div class="mob-card mob-scanner-card" id="mobScannerCard">
+        <div class="mob-card-hd">Live QR Scanner</div>
+
+        <!-- Viewfinder -->
+        <div class="mob-vf-wrap" id="mobVFWrap">
+          <!-- Video feed -->
+          <video id="mobScanVideo" autoplay playsinline muted style="display:none"></video>
+          <!-- Canvas used for frame capture -->
+          <canvas id="mobScanCanvas" style="display:none"></canvas>
+
+          <!-- Idle state (before camera starts) -->
+          <div class="mob-vf-idle" id="mobVFIdle">
+            <!-- Corner brackets -->
+            <div class="mob-vf-corner tl"></div>
+            <div class="mob-vf-corner tr"></div>
+            <div class="mob-vf-corner bl"></div>
+            <div class="mob-vf-corner br"></div>
+            <!-- Animated QR idle graphic -->
+            <div class="mob-vf-qr-idle">
+              <!-- Finder corner glows -->
+              <div class="mob-vf-qr-glow g-tl"></div>
+              <div class="mob-vf-qr-glow g-tr"></div>
+              <div class="mob-vf-qr-glow g-br"></div>
+              <div class="mob-vf-qr-glow g-bl"></div>
+              <!-- Sweep beam overlay -->
+              <div class="mob-vf-qr-beam"></div>
+              <!-- Static QR SVG -->
+              <svg class="mob-vf-qr-svg" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Top-left finder -->
+                <rect x="6" y="6" width="28" height="28" rx="4" fill="none" stroke="#8a5cf6" stroke-width="2.5"/>
+                <rect x="11" y="11" width="18" height="18" rx="2.5" fill="#8a5cf6" opacity="0.9"/>
+                <!-- Top-right finder -->
+                <rect x="56" y="6" width="28" height="28" rx="4" fill="none" stroke="#8a5cf6" stroke-width="2.5"/>
+                <rect x="61" y="11" width="18" height="18" rx="2.5" fill="#8a5cf6" opacity="0.9"/>
+                <!-- Bottom-left finder -->
+                <rect x="6" y="56" width="28" height="28" rx="4" fill="none" stroke="#8a5cf6" stroke-width="2.5"/>
+                <rect x="11" y="61" width="18" height="18" rx="2.5" fill="#8a5cf6" opacity="0.9"/>
+                <!-- Data module pattern (bottom-right area) -->
+                <rect x="56" y="56" width="7" height="7" rx="1.2" fill="#22d3ee" opacity="0.85"/>
+                <rect x="66" y="56" width="7" height="7" rx="1.2" fill="#8a5cf6" opacity="0.7"/>
+                <rect x="76" y="56" width="8" height="7" rx="1.2" fill="#22d3ee" opacity="0.6"/>
+                <rect x="56" y="66" width="11" height="7" rx="1.2" fill="#8a5cf6" opacity="0.65"/>
+                <rect x="70" y="66" width="7" height="7" rx="1.2" fill="#22d3ee" opacity="0.8"/>
+                <rect x="56" y="76" width="7" height="8" rx="1.2" fill="#22d3ee" opacity="0.7"/>
+                <rect x="66" y="76" width="18" height="8" rx="1.2" fill="#8a5cf6" opacity="0.65"/>
+                <!-- Timing dots (horizontal) -->
+                <rect x="38" y="19" width="4" height="4" rx="0.8" fill="#22d3ee" opacity="0.5"/>
+                <rect x="44" y="19" width="4" height="4" rx="0.8" fill="#22d3ee" opacity="0.4"/>
+                <!-- Timing dots (vertical) -->
+                <rect x="19" y="38" width="4" height="4" rx="0.8" fill="#22d3ee" opacity="0.5"/>
+                <rect x="19" y="44" width="4" height="4" rx="0.8" fill="#22d3ee" opacity="0.4"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Active camera overlay -->
+          <div class="mob-vf-active" id="mobVFActive" style="display:none">
+            <div class="mob-vf-corner tl"></div>
+            <div class="mob-vf-corner tr"></div>
+            <div class="mob-vf-corner bl"></div>
+            <div class="mob-vf-corner br"></div>
+            <!-- Animated scan line -->
+            <div class="mob-vf-scanline" id="mobVFScanline"></div>
+            <!-- Aiming dot -->
+            <div class="mob-vf-aim"></div>
+            <div class="mob-vf-scanning-lbl">Scanning…</div>
+          </div>
+
+          <!-- Success flash -->
+          <div class="mob-vf-success" id="mobVFSuccess" style="display:none">
+            <div class="mob-vf-corner tl success"></div>
+            <div class="mob-vf-corner tr success"></div>
+            <div class="mob-vf-corner bl success"></div>
+            <div class="mob-vf-corner br success"></div>
+            <div class="mob-vf-ok-icon">✓</div>
+          </div>
+        </div>
+
+        <!-- Primary action buttons -->
+        <div class="mob-scan-actions" id="mobScanActions">
+          <button type="button" class="mob-scan-start-btn" id="mobScanStartBtn" onclick="mobStartScan()">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="10" r="8" stroke="white" stroke-width="1.4"/>
+              <circle cx="10" cy="10" r="4" fill="white"/>
+            </svg>
+            Start Live Scan
+          </button>
+        </div>
+
+        <!-- Active scanning controls (shown when camera running) -->
+        <div class="mob-scan-live-ctrl" id="mobScanLiveCtrl" style="display:none">
+          <button type="button" class="mob-scan-stop-btn" onclick="mobStopScan()">⏹ Stop</button>
+          <button type="button" class="mob-scan-flip-btn" id="mobFlipBtn" onclick="mobFlipCamera()">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+              <path d="M4 10a6 6 0 0 1 6-6 6 6 0 0 1 4.24 1.76" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <path d="M16 10a6 6 0 0 1-6 6 6 6 0 0 1-4.24-1.76" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <polyline points="14,7.5 14.5,10.5 17.5,10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Flip
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Divider ── -->
+      <div class="mob-scan-or">
+        <div class="mob-scan-or-line"></div>
+        <span class="mob-scan-or-txt">or upload image</span>
+        <div class="mob-scan-or-line"></div>
+      </div>
+
+      <!-- ── File upload card ── -->
+      <div class="mob-card">
+        <div class="mob-card-hd">Scan From Image</div>
+        <div class="mob-drop" id="mobQRDrop" onclick="document.getElementById('mobQRFileIn').click()">
+          <div class="mob-drop-ring">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- QR finder squares -->
+              <rect x="2" y="2" width="10" height="10" rx="2" fill="none" stroke="#8a5cf6" stroke-width="1.4"/>
+              <rect x="4.5" y="4.5" width="5" height="5" rx="1" fill="#8a5cf6" opacity="0.9"/>
+              <rect x="16" y="2" width="10" height="10" rx="2" fill="none" stroke="#8a5cf6" stroke-width="1.4"/>
+              <rect x="18.5" y="4.5" width="5" height="5" rx="1" fill="#8a5cf6" opacity="0.9"/>
+              <rect x="2" y="16" width="10" height="10" rx="2" fill="none" stroke="#8a5cf6" stroke-width="1.4"/>
+              <rect x="4.5" y="18.5" width="5" height="5" rx="1" fill="#8a5cf6" opacity="0.9"/>
+              <!-- Upload arrow (bottom-right quadrant) -->
+              <line x1="21" y1="25" x2="21" y2="18" stroke="#22d3ee" stroke-width="1.6" stroke-linecap="round"/>
+              <polyline points="18,21 21,17.5 24,21" stroke="#22d3ee" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="mob-drop-title">Upload QR Image</div>
+          <div class="mob-drop-sub">Tap to browse · PNG · JPG · WebP</div>
+        </div>
+        <input type="file" id="mobQRFileIn" accept="image/*" style="display:none">
+      </div>
+
+      <!-- ── Result card ── -->
+      <div class="mob-card" id="mobDecodeResultCard" style="display:none">
+        <div class="mob-card-hd">Decoded Result</div>
+        <div id="mobQRDecodeResult"></div>
+        <button type="button" class="mob-scan-another-btn" id="mobScanAnotherBtn" onclick="mobScanAnother()">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none">
+            <path d="M4 10a6 6 0 1 1 .74 2.91" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            <polyline points="1,10 4,13 7,10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Scan Another
+        </button>
+      </div>
+
+    </div><!-- /mpDecode -->
+
+    <!-- PAGE: History -->
+    <div class="mob-page" id="mpHistory">
+      <div class="mob-card">
+        <div class="mob-card-hd">QR Code History</div>
+        <div id="mobQRHistList"><div class="mob-no-hist">No QR codes generated yet</div></div>
+      </div>
+      <div class="mob-card">
+        <div class="mob-card-hd">Barcode History</div>
+        <div id="mobBCHistList"><div class="mob-no-hist">No barcodes generated yet</div></div>
+      </div>
+    </div><!-- /mpHistory -->
+
+  </div><!-- /mobBody -->
+
+  <!-- Bottom nav -->
+  <nav id="mobNav">
+    <button type="button" class="mob-nav-btn active" id="mnavQR" onclick="mobNavGo('qr')">
+      <div class="mob-nav-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor" opacity=".95"/><rect x="10" y="1" width="5" height="5" rx="1" fill="currentColor" opacity=".75"/><rect x="1" y="10" width="5" height="5" rx="1" fill="currentColor" opacity=".75"/><rect x="11" y="11" width="3" height="3" rx=".5" fill="currentColor" opacity=".5"/><rect x="3" y="3" width="1" height="1" fill="currentColor"/><rect x="12" y="3" width="1" height="1" fill="currentColor"/><rect x="3" y="12" width="1" height="1" fill="currentColor"/></svg>
+      </div>
+      <span class="mob-nav-lbl">QR Code</span>
+    </button>
+    <button type="button" class="mob-nav-btn" id="mnavBC" onclick="mobNavGo('bc')">
+      <div class="mob-nav-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="1.5" height="12" rx=".5" fill="currentColor"/><rect x="4" y="2" width="3" height="12" rx=".5" fill="currentColor" opacity=".7"/><rect x="8.5" y="2" width="1" height="12" rx=".5" fill="currentColor"/><rect x="11" y="2" width="2" height="12" rx=".5" fill="currentColor" opacity=".6"/><rect x="14.5" y="2" width="1" height="12" rx=".5" fill="currentColor" opacity=".9"/></svg>
+      </div>
+      <span class="mob-nav-lbl">Barcode</span>
+    </button>
+    <button type="button" class="mob-nav-btn" id="mnavScan" onclick="mobNavGo('decode')">
+      <div class="mob-nav-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.3"/><line x1="10.5" y1="10.5" x2="14" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="7" x2="9" y2="7" stroke="currentColor" stroke-width="1" opacity=".6"/><line x1="7" y1="5" x2="7" y2="9" stroke="currentColor" stroke-width="1" opacity=".6"/></svg>
+      </div>
+      <span class="mob-nav-lbl">Decode</span>
+    </button>
+    <button type="button" class="mob-nav-btn" id="mnavHist" onclick="mobNavGo('history')">
+      <div class="mob-nav-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><polyline points="8,5 8,8 10,10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      </div>
+      <span class="mob-nav-lbl">History</span>
+    </button>
+  </nav>
+
+</div><!-- /mobApp -->
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+
+
+<!-- CURTAIN -->
+<div id="curtain">
+  <div class="crt-aura"></div>
+  <div class="crt-aura"></div>
+  <div class="crt">
+    <div class="crt-icons-row">
+      <div class="crt-qr-grid" id="crtPixelGrid"></div>
+      <div class="crt-icon-sep"><span></span><span></span><span></span></div>
+      <div class="crt-bc-icon"><div class="crt-bc-bars" id="crtBcBars"></div></div>
+    </div>
+    <div class="crt-sub">Professional QR &amp; Barcode Suite</div>
+    <div class="crt-word" id="crtWord">
+      <span class="crt-letter ba-part">N</span>
+      <span class="crt-letter ba-part">e</span>
+      <span class="crt-letter ba-part">x</span>
+      <span class="crt-letter ba-part">a</span>
+      <span class="crt-letter">&nbsp;</span>
+      <span class="crt-letter rix-part">S</span>
+      <span class="crt-letter rix-part">c</span>
+      <span class="crt-letter rix-part">a</span>
+      <span class="crt-letter rix-part">n</span>
+    </div>
+    <div class="crt-line"></div>
+    <div class="crt-badges">
+      <span class="crt-badge qr">QRIX</span>
+      <span class="crt-badge bc">BARIX</span>
+    </div>
+    <div class="crt-dots"><span class="crt-dot"></span><span class="crt-dot"></span><span class="crt-dot"></span></div>
+  </div>
+</div>
+
+<div id="cg"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<!-- FLOATING SECTION NAV -->
+<nav id="sectionNav" aria-label="Section navigation">
+  <button class="snav-btn snav-qr snav-active" id="snavQR" onclick="snavSwitch('qr')" title="QR Code Generator">
+    <span class="snav-icon">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor" opacity="0.95"/>
+        <rect x="10" y="1" width="5" height="5" rx="1" fill="currentColor" opacity="0.75"/>
+        <rect x="1" y="10" width="5" height="5" rx="1" fill="currentColor" opacity="0.75"/>
+        <rect x="11" y="11" width="3" height="3" rx="0.5" fill="currentColor" opacity="0.5"/>
+        <rect x="3" y="3" width="1" height="1" fill="currentColor"/>
+        <rect x="12" y="3" width="1" height="1" fill="currentColor"/>
+        <rect x="3" y="12" width="1" height="1" fill="currentColor"/>
+      </svg>
+    </span>
+    <span class="snav-label">QR Code</span>
+    <span class="snav-dot"></span>
+  </button>
+  <button class="snav-btn snav-bc" id="snavBC" onclick="snavSwitch('bc')" title="Barcode Generator">
+    <span class="snav-icon">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <rect x="1" y="2" width="1.5" height="12" rx="0.5" fill="currentColor"/>
+        <rect x="4" y="2" width="3" height="12" rx="0.5" fill="currentColor" opacity="0.7"/>
+        <rect x="8.5" y="2" width="1" height="12" rx="0.5" fill="currentColor"/>
+        <rect x="11" y="2" width="2" height="12" rx="0.5" fill="currentColor" opacity="0.6"/>
+        <rect x="14.5" y="2" width="1" height="12" rx="0.5" fill="currentColor" opacity="0.9"/>
+      </svg>
+    </span>
+    <span class="snav-label">Barcode</span>
+    <span class="snav-dot"></span>
+  </button>
+</nav>
+
+<div class="bgrid"></div>
+
+<!-- ═══════════════════ QR SECTION ═══════════════════ -->
+<div id="modeViewport">
+<div id="mainContent" tabindex="-1" style="position:absolute;top:0"></div>
+<div class="wrap mode-section is-active" id="qrSection">
+  <header>
+    <div class="header-entry">
+      <div class="he-qr-wrap">
+        <!-- Pure SVG QR — drawn by JS below, loops forever -->
+        <svg class="he-qr-svg" id="heQrSvg" viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"></svg>
+        <div class="he-qr-corner tl"></div>
+        <div class="he-qr-corner tr"></div>
+        <div class="he-qr-corner bl"></div>
+        <div class="he-qr-corner br"></div>
+        <div class="he-scan-line"></div>
+      </div>
+      <!-- Decode readout under QR -->
+      <div class="he-decode-wrap" id="heDecodeWrap">
+        <span class="he-decode-label">DECODED</span>
+        <span class="he-decode-text" id="heDecodeText"></span><span class="he-decode-cursor">|</span>
+      </div>
+    </div>
+    <div class="logo-scroll-wrap" id="logoScrollWrap">
+      <div style="position:relative;display:inline-block">
+        <h1 class="display" id="mainTitle">Qrix</h1>
+      </div>
+    </div>
+    <div class="logo-badge" style="margin-top:22px;margin-bottom:20px">
+      <div class="logo-icon" role="img" aria-label="Nexa Scan logo">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <rect x="1" y="1" width="5" height="5" rx="1" fill="white" opacity="0.95"/>
+          <rect x="8" y="1" width="5" height="5" rx="1" fill="white" opacity="0.75"/>
+          <rect x="1" y="8" width="5" height="5" rx="1" fill="white" opacity="0.75"/>
+          <rect x="9" y="9" width="3" height="3" rx="0.5" fill="white" opacity="0.5"/>
+          <rect x="8" y="8" width="1.5" height="1.5" rx="0.3" fill="white" opacity="0.9"/>
+        </svg>
+      </div>
+      Professional QR Suite
+    </div>
+    <p class="subtitle" id="mainSub">Generate, style &amp; decode QR codes and barcodes with studio-grade precision. Fully private — no data leaves your browser.</p>
+  </header>
+
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card"><div class="stat-val sv" id="statGenerated">0</div><div class="stat-lbl">QR Generated</div></div>
+    <div class="stat-card"><div class="stat-val sc" id="statScanned">0</div><div class="stat-lbl">Decoded</div></div>
+    <div class="stat-card"><div class="stat-val sp" id="statTypes">22</div><div class="stat-lbl">QR Types</div></div>
+  </div>
+
+  <div class="tabs-wrap" id="tabsWrap">
+    <div class="tabs-bar">
+      <div class="tab-ink" id="tabInk"></div>
+      <button class="tab-btn active" data-tab="generate">⊞ Generate</button>
+      <button class="tab-btn" data-tab="scan">⊙ Decode</button>
+      <button class="tab-btn" data-tab="history">◎ History</button>
+    </div>
+  </div>
+
+  <div class="panel active" id="panel-generate">
+    <div class="gen-grid">
+      <div>
+        <div class="glass-card" style="margin-bottom:22px" id="cType">
+          <div class="card-label">Step 1</div>
+          <div class="card-title">Choose QR Type</div>
+          <div id="typeGrid"></div>
+        </div>
+        <div class="glass-card" id="formCard">
+          <div class="card-label">Step 2</div>
+          <div class="card-title" id="formCardTitle">Enter Details</div>
+          <div id="formSection"></div>
+          <div class="generate-btn-wrap">
+            <button class="btn btn-primary" id="generateBtn">✦ Generate QR Code</button>
+          </div>
+        </div>
+      </div>
+      <div class="qr-sticky">
+        <div class="glass-card" style="margin-bottom:16px" id="cPreview">
+          <div class="card-label">Preview</div>
+          <div class="card-title" style="font-size:18px;margin-bottom:16px">QR Code Output</div>
+          <div class="qr-canvas-wrap" id="qrCanvasWrap">
+            <div class="qr-placeholder" id="qrPlaceholder">
+              <div class="qr-placeholder-bars" id="qrPlaceholderBars"></div>
+              <div class="qr-placeholder-text">Your QR code will appear here</div>
+            </div>
+            <canvas id="qrCanvas" style="display:none"></canvas>
+          </div>
+          <div class="btn-action-group" id="qrActions" style="display:none">
+            <button class="btn btn-primary btn-sm" id="downloadBtn" aria-label="Download QR code as PNG">⬇ Download</button>
+            <button class="btn btn-ghost btn-sm" id="copyBtn" aria-label="Copy QR code to clipboard">⧉ Copy</button>
+            <button class="btn btn-ghost btn-sm" id="shareBtn" aria-label="Share QR code">↗ Share</button>
+          </div>
+        </div>
+        <div class="glass-card" id="cStyle">
+          <div class="card-label">Customise</div>
+          <div class="card-title" style="font-size:18px;margin-bottom:16px">Style &amp; Quality</div>
+          <div class="field-group">
+            <label class="field-label">Error Correction</label>
+            <div class="ec-tabs">
+              <button class="ec-tab" data-ec="L">L<br><span style="font-weight:300;letter-spacing:0">7%</span></button>
+              <button class="ec-tab active" data-ec="M">M<br><span style="font-weight:300;letter-spacing:0">15%</span></button>
+              <button class="ec-tab" data-ec="Q">Q<br><span style="font-weight:300;letter-spacing:0">25%</span></button>
+              <button class="ec-tab" data-ec="H">H<br><span style="font-weight:300;letter-spacing:0">30%</span></button>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Module Size — <span id="sizeLabel">5 px</span></label>
+            <input type="range" class="size-slider" id="sizeSlider" min="2" max="12" value="5"/>
+          </div>
+          <div class="section-divider"><div class="section-divider-line"></div><div class="section-divider-text">Colors</div><div class="section-divider-line"></div></div>
+          <div class="field-group">
+            <label class="field-label">Dark Color</label>
+            <div class="style-row">
+              <div class="swatch-wrap"><div class="swatch-preview" id="darkSwatchPreview" style="background:#000"><input type="color" id="darkColor" value="#000000"/></div></div>
+              <div class="color-label" id="darkColorLabel">#000000</div>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Light Color</label>
+            <div class="style-row">
+              <div class="swatch-wrap"><div class="swatch-preview" id="lightSwatchPreview" style="background:#fff"><input type="color" id="lightColor" value="#ffffff"/></div></div>
+              <div class="color-label" id="lightColorLabel">#ffffff</div>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Presets</label>
+            <div class="preset-grid">
+              <button class="preset-card" onclick="applyColorPreset('#000000','#ffffff')"><div class="preset-bar" style="background:linear-gradient(135deg,#000000 50%,#ffffff 50%)"></div><span class="preset-name">Classic</span></button>
+              <button class="preset-card" onclick="applyColorPreset('#8a5cf6','#0d0d1a')"><div class="preset-bar" style="background:linear-gradient(135deg,#8a5cf6 50%,#0d0d1a 50%)"></div><span class="preset-name">Violet</span></button>
+              <button class="preset-card" onclick="applyColorPreset('#22d3ee','#0a0a16')"><div class="preset-bar" style="background:linear-gradient(135deg,#22d3ee 50%,#0a0a16 50%)"></div><span class="preset-name">Cyan</span></button>
+              <button class="preset-card" onclick="applyColorPreset('#f472b6','#1a0a14')"><div class="preset-bar" style="background:linear-gradient(135deg,#f472b6 50%,#1a0a14 50%)"></div><span class="preset-name">Rose</span></button>
+              <button class="preset-card" onclick="applyColorPreset('#fb923c','#1a0d00')"><div class="preset-bar" style="background:linear-gradient(135deg,#fb923c 50%,#1a0d00 50%)"></div><span class="preset-name">Amber</span></button>
+              <button class="preset-card" onclick="applyColorPreset('#4ade80','#001a08')"><div class="preset-bar" style="background:linear-gradient(135deg,#4ade80 50%,#001a08 50%)"></div><span class="preset-name">Mint</span></button>
+              <button class="preset-card" onclick="applyColorPreset('#facc15','#1a1500')"><div class="preset-bar" style="background:linear-gradient(135deg,#facc15 50%,#1a1500 50%)"></div><span class="preset-name">Gold</span></button>
+              <button class="preset-card" onclick="applyColorPreset('#e11d48','#1a0008')"><div class="preset-bar" style="background:linear-gradient(135deg,#e11d48 50%,#1a0008 50%)"></div><span class="preset-name">Crimson</span></button>
+              <button class="preset-card" onclick="applyColorPreset('#ffffff','#000000')"><div class="preset-bar" style="background:linear-gradient(135deg,#ffffff 50%,#000000 50%)"></div><span class="preset-name">Invert</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-scan">
+    <div class="scan-grid">
+      <div>
+        <div class="https-warning" id="httpsWarningQR" role="alert" aria-live="polite">
+          <span aria-hidden="true">⚠</span>
+          <span><strong>HTTPS required for camera access.</strong> File upload scanning still works.</span>
+        </div>
+        <div class="drop-zone glass-card" id="dropZone" role="region" aria-label="QR code image upload zone">
+          <div class="drop-zone-ring" aria-hidden="true">🔍</div>
+          <div class="drop-zone-title">Drop QR Image Here</div>
+          <div class="drop-zone-sub">Drag &amp; drop or click to browse</div>
+          <button class="btn btn-primary" id="browseBtn" aria-label="Browse files to scan QR code">Browse Files</button>
+          <div class="drop-zone-formats">PNG · JPG · GIF · WebP · BMP · JPEG</div>
+          <input type="file" id="scanFileInput" accept="image/*" aria-label="Select image file for QR scanning" tabindex="-1"/>
+        </div>
+        </div>
+        <div class="glass-card" style="margin-top:16px;padding:18px">
+          <div style="font-size:9px;font-weight:600;letter-spacing:0.13em;text-transform:uppercase;color:var(--txt3);margin-bottom:9px">Privacy Note</div>
+          <p style="font-size:12px;color:var(--txt2);line-height:1.7">All decoding runs entirely in your browser via jsQR and BarcodeDetector (when available). No image data is ever transmitted.</p>
+        </div>
+      </div>
+      <div class="glass-card scan-result-card">
+        <div class="card-label">Decode Result</div>
+        <div class="card-title">Decoded Content</div>
+        <div id="scanResultArea"><div class="scan-result-empty"><div class="scan-result-empty-icon">⊙</div>Upload a QR or barcode image to decode its contents</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-history">
+    <div class="glass-card">
+      <div class="card-label">Session</div>
+      <div class="card-title">Generated History</div>
+      <div class="history-list" id="historyList"><div class="no-hist">No QR codes generated yet in this session.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ BARCODE SECTION ═══════════════════ -->
+<div id="barcodeSection" class="mode-section">
+  <div class="bc-section-header">
+    <div class="bc-hero-barcode">
+      <canvas id="bcHeroCanvas" width="360" height="120"></canvas>
+      <div class="bc-hero-corner tl"></div>
+      <div class="bc-hero-corner tr"></div>
+      <div class="bc-hero-corner bl"></div>
+      <div class="bc-hero-corner br"></div>
+      <div class="bc-hero-scan"></div>
+      <div class="bc-hero-ok">✓</div>
+    </div>
+    <h2 class="bc-heading" id="bcTitle">Barix</h2>
+    <div class="bc-badge">
+      <span class="bc-badge-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <rect x="1" y="2" width="1.5" height="12" rx="0.5" fill="#22d3ee"/>
+          <rect x="4" y="2" width="3" height="12" rx="0.5" fill="#22d3ee" opacity="0.7"/>
+          <rect x="8.5" y="2" width="1" height="12" rx="0.5" fill="#22d3ee"/>
+          <rect x="11" y="2" width="2" height="12" rx="0.5" fill="#22d3ee" opacity="0.6"/>
+          <rect x="14.5" y="2" width="1" height="12" rx="0.5" fill="#22d3ee" opacity="0.9"/>
+        </svg>
+      </span>
+      Barcode Generator
+    </div>
+    <p class="bc-sub" id="bcSub">Generate retail, logistics &amp; industrial barcodes. Pure canvas rendering — no external dependencies.</p>
+  </div>
+
+  <div class="wrap" style="padding-top:0">
+    <div class="bc-section-line"></div>
+
+    <!-- Barcode Stats Row -->
+    <div class="bc-stats-row" id="bcStatsRow">
+      <div class="stat-card"><div class="stat-val sv" id="bcStatGenerated">0</div><div class="stat-lbl">Barcode Generated</div></div>
+      <div class="stat-card"><div class="stat-val sp" id="bcStatTypes">8</div><div class="stat-lbl">Barcode Types</div></div>
+    </div>
+
+    <div class="bc-tabs-wrap">
+      <div class="bc-tabs-bar" id="bcTabsBar">
+        <div class="bc-tab-ink" id="bcTabInk"></div>
+        <button class="bc-tab-btn active" data-bctab="generate">⊞ Generate</button>
+        <button class="bc-tab-btn" data-bctab="history">◎ History</button>
+      </div>
+    </div>
+
+    <div class="bc-panel active" id="bc-panel-generate">
+    <div class="bc-gen-grid">
+      <!-- FULL WIDTH COLUMN -->
+      <div style="grid-column:1/-1">
+
+        <!-- Step 1: Format -->
+        <div class="glass-card on" style="margin-bottom:22px">
+          <div class="card-label">Step 1</div>
+          <div class="card-title" style="font-size:18px;margin-bottom:16px">Choose Format</div>
+          <div class="bc-format-row" id="bcFormatRow"></div>
+          <div class="bc-fmt-info">
+            <span class="bc-fmt-info-dot"></span>
+            <span id="bcFmtInfoText">Select a barcode format above</span>
+          </div>
+          <div class="bc-type-features" id="bcTypeFeatures"></div>
+        </div>
+
+        <!-- Two-column: Enter Data + Preview -->
+        <div class="bc-inner-2col">
+          <!-- Step 2: Enter Data -->
+          <div class="glass-card on">
+            <div class="card-label">Step 2</div>
+            <div class="card-title" style="font-size:18px;margin-bottom:16px">Enter Data</div>
+            <div class="field-group">
+              <label class="field-label" id="bcInputLabel" for="bcInput">Value</label>
+              <input class="field-input" id="bcInput" placeholder="Select a format first…" aria-describedby="bcCharCounter bcInputError" aria-required="true"/>
+              <div class="field-error" id="bcInputError" role="alert" aria-live="polite"></div>
+              <div class="bc-char-counter" id="bcCharCounter" aria-live="polite">Select a format above</div>
+            </div>
+            <div class="generate-btn-wrap" style="margin-top:20px">
+              <button id="bcGenerateBtn" aria-label="Generate barcode">▬▬ Generate Barcode</button>
+            </div>
+          </div>
+
+          <!-- Preview -->
+          <div class="glass-card on bc-sticky">
+            <div class="card-label">Preview</div>
+            <div class="card-title" style="font-size:18px;margin-bottom:16px">Barcode Output</div>
+            <div class="bc-canvas-wrap" id="bcCanvasWrap">
+              <div class="bc-placeholder" id="bcPlaceholder">
+                <div class="bc-placeholder-bars" id="bcPlaceholderBars"></div>
+                <div class="bc-placeholder-text">Barcode preview</div>
+              </div>
+              <div class="bc-scan-line" id="bcScanLine"></div>
+              <canvas id="bcCanvas"></canvas>
+            </div>
+            <div class="bc-value-display" id="bcValueDisplay"></div>
+            <div class="bc-action-group" id="bcActions" style="display:none">
+              <button class="btn btn-cyan btn-sm" id="bcDownloadBtn" aria-label="Download barcode as PNG">⬇ Download PNG</button>
+              <button class="btn btn-ghost btn-sm" id="bcCopyBtn" aria-label="Copy barcode image to clipboard">⧉ Copy Image</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Appearance -->
+        <div class="glass-card on">
+          <div class="card-label">Step 3</div>
+          <div class="card-title" style="font-size:18px;margin-bottom:16px">Appearance</div>
+
+          <div class="bc-style-grid">
+            <div class="field-group">
+              <label class="field-label">Bar Color</label>
+              <div class="style-row">
+                <div class="swatch-wrap"><div class="swatch-preview" id="bcDarkSwatchPreview" style="background:#000"><input type="color" id="bcBarColor" value="#000000"/></div></div>
+                <div class="color-label" id="bcBarColorLabel">#000000</div>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Background</label>
+              <div class="style-row">
+                <div class="swatch-wrap"><div class="swatch-preview" id="bcLightSwatchPreview" style="background:#fff"><input type="color" id="bcBgColor" value="#ffffff"/></div></div>
+                <div class="color-label" id="bcBgColorLabel">#ffffff</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Bar Height — <span class="bc-height-display" id="bcHeightLabel">80 px</span></label>
+            <input type="range" class="size-slider" id="bcHeightSlider" min="40" max="200" value="80"/>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Scale — <span class="bc-height-display" id="bcScaleLabel">2×</span></label>
+            <input type="range" class="size-slider" id="bcScaleSlider" min="1" max="4" step="0.5" value="2"/>
+          </div>
+          <div class="field-group" style="display:flex;align-items:center;gap:10px">
+            <input type="checkbox" id="bcShowText" checked style="accent-color:var(--c);width:14px;height:14px;cursor:pointer"/>
+            <label for="bcShowText" style="font-size:12px;color:var(--txt2);cursor:pointer">Show value text below barcode</label>
+          </div>
+
+          <div class="section-divider"><div class="section-divider-line"></div><div class="section-divider-text">Color Presets</div><div class="section-divider-line"></div></div>
+          <div class="bc-preset-grid">
+            <button class="bc-preset-card" onclick="applyBcPreset('#000000','#ffffff')"><div class="bc-preset-bar" style="background:linear-gradient(135deg,#000 50%,#fff 50%)"></div>Classic</button>
+            <button class="bc-preset-card" onclick="applyBcPreset('#22d3ee','#0a0a16')"><div class="bc-preset-bar" style="background:linear-gradient(135deg,#22d3ee 50%,#0a0a16 50%)"></div>Cyan</button>
+            <button class="bc-preset-card" onclick="applyBcPreset('#8a5cf6','#0d0d1a')"><div class="bc-preset-bar" style="background:linear-gradient(135deg,#8a5cf6 50%,#0d0d1a 50%)"></div>Violet</button>
+            <button class="bc-preset-card" onclick="applyBcPreset('#f472b6','#1a0a14')"><div class="bc-preset-bar" style="background:linear-gradient(135deg,#f472b6 50%,#1a0a14 50%)"></div>Rose</button>
+            <button class="bc-preset-card" onclick="applyBcPreset('#4ade80','#001a08')"><div class="bc-preset-bar" style="background:linear-gradient(135deg,#4ade80 50%,#001a08 50%)"></div>Mint</button>
+            <button class="bc-preset-card" onclick="applyBcPreset('#facc15','#1a1500')"><div class="bc-preset-bar" style="background:linear-gradient(135deg,#facc15 50%,#1a1500 50%)"></div>Gold</button>
+            <button class="bc-preset-card" onclick="applyBcPreset('#ffffff','#000000')"><div class="bc-preset-bar" style="background:linear-gradient(135deg,#fff 50%,#000 50%)"></div>Invert</button>
+            <button class="bc-preset-card" onclick="applyBcPreset('#e11d48','#1a0008')"><div class="bc-preset-bar" style="background:linear-gradient(135deg,#e11d48 50%,#1a0008 50%)"></div>Crimson</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    </div>
+
+
+    <div class="bc-panel" id="bc-panel-history">
+      <div class="glass-card">
+        <div class="card-label">Session</div>
+        <div class="card-title">Generated History</div>
+        <div class="history-list" id="bcHistoryList"><div class="no-hist">No QR codes generated yet in this session.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</body>
+</html>
